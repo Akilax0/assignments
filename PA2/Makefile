@@ -1,7 +1,7 @@
 
 ASSN = 2
 CLASS= cs143
-CLASSDIR= ../..
+CLASSDIR= ../../../cool
 LIB= -lfl
 
 SRC= cool.flex test.cl README 
