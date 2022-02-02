@@ -49,7 +49,33 @@ extern YYSTYPE cool_yylval;
  * Define names for regular expressions here.
  */
 
+%x COMMENT
+%S STRING_CONST
+
 DARROW          =>
+ASSIGN          <-
+LE              <=
+OTHER           [+-*/{}()*/.,;:]
+DIGIT          [0-9]
+INTEGER        [0-9]+
+
+IDENTIFIRE    [a-zA-Z][a-zA-Z0-9_]*
+
+CLASS          (?i:class)
+ELSE           (?i:else)
+FI             (?i:fi)
+IN            (?i:in)
+INHERITS       (?i:inherits)
+ISVOID         (?i:isvoid)
+LET            (?i:let)
+LOOP           (?i:loop)
+POOL           (?i:pool)
+THEN           (?i:then)
+CASE          (?i:case)
+ESAC          (?i:esac)
+NEW           (?i:new)
+OF           (?i:of)
+NOT          (?i:not)
 
 %%
 
