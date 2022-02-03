@@ -102,5 +102,25 @@ NOT          (?i:not)
   *
   */
 
+{CLASS}	{return CLASS;}
+{ELSE}	{return ELSE;}
+{FI}    {return FI;}
+{IN}	{return IN;}
+{INHERITS}  {return INHERITS;}
+{ISVOID}    {return ISVOID;}
+{LET}	{return LET;}
+{LOOP}           {return LOOP;}
+{POOL}           {return POOL;}
+{THEN}           {return THEN;}
+{CASE}          {return CASE;}
+{ESAC}          {return ESAC;}
+{NEW}           {return NEW;}
+{OF}           {return OF;}
+{NOT}          {return NOT;}
+{DARROW}    {return DARROW;}
+{ASSIGN}    {return ASSIGN;}
+{LE}        {return LE;}
+
+
 
 %%
