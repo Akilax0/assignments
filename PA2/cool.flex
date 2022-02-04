@@ -43,11 +43,23 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
+
+
+int str_count = 0; 
+
+
+
+
+
 %}
 
 /*
  * Define names for regular expressions here.
  */
+
+
+
+
 
 %x COMMENT
 %S STRING_CONST
@@ -55,27 +67,49 @@ extern YYSTYPE cool_yylval;
 DARROW          =>
 ASSIGN          <-
 LE              <=
+
 OTHER           [+-*/{}()*/.,;:]
+
 DIGIT          [0-9]
 INTEGER        [0-9]+
 
+
+
 IDENTIFIRE    [a-zA-Z][a-zA-Z0-9_]*
 
-CLASS          (?i:class)
-ELSE           (?i:else)
-FI             (?i:fi)
-IN            (?i:in)
-INHERITS       (?i:inherits)
-ISVOID         (?i:isvoid)
-LET            (?i:let)
-LOOP           (?i:loop)
-POOL           (?i:pool)
-THEN           (?i:then)
-CASE          (?i:case)
-ESAC          (?i:esac)
-NEW           (?i:new)
-OF           (?i:of)
-NOT          (?i:not)
+TYPEID	    [A-Z]([A-Za-z_0-9])*
+OBJECTID    [a-z]([A-Za-z_0-9])*
+
+
+/* COMMENTS */
+BEGIN_COMMENT		\(\*
+END_COMMENT		\*\)
+LINE_COMMENT		--.*
+
+/* KEYWORDS*/
+CLASS		(?i:class)
+ELSE		(?i:else)
+FI		(?i:fi)
+IN		(?i:in)
+INHERITS	(?i:inherits)
+ISVOID		(?i:isvoid)
+LET		(?i:let)
+LOOP		(?i:loop)
+POOL		(?i:pool)
+THEN		(?i:then)
+CASE		(?i:case)
+ESAC		(?i:esac)
+NEW		(?i:new)
+OF		(?i:of)
+NOT		(?i:not)
+
+
+
+
+
+
+
+
 
 %%
 
@@ -102,25 +136,40 @@ NOT          (?i:not)
   *
   */
 
-{CLASS}	{return CLASS;}
-{ELSE}	{return ELSE;}
-{FI}    {return FI;}
-{IN}	{return IN;}
+
+ /*
+  *  KEYWORDS
+  */
+
+
+
+{CLASS}	    {return CLASS;}
+{ELSE}	    {return ELSE;}
+{FI}	    {return FI;}
+{IN}	    {return IN;}
 {INHERITS}  {return INHERITS;}
 {ISVOID}    {return ISVOID;}
-{LET}	{return LET;}
-{LOOP}           {return LOOP;}
-{POOL}           {return POOL;}
-{THEN}           {return THEN;}
-{CASE}          {return CASE;}
-{ESAC}          {return ESAC;}
-{NEW}           {return NEW;}
-{OF}           {return OF;}
-{NOT}          {return NOT;}
+{LET}	    {return LET;}
+{LOOP}      {return LOOP;}
+{POOL}      {return POOL;}
+{THEN}      {return THEN;}
+{CASE}      {return CASE;}
+{ESAC}      {return ESAC;}
+{NEW}       {return NEW;}
+{OF}        {return OF;}
+{NOT}       {return NOT;}
 {DARROW}    {return DARROW;}
 {ASSIGN}    {return ASSIGN;}
 {LE}        {return LE;}
 
 
+ /*
+  *  INTEGER
+  */
+
+{INTEGER}   {
+		cool_yylval.symbol = new IntEntry(yytext, MAX_STR_CONST, str_count++);
+		return (INT_CONST);
+	    }
 
 %%
