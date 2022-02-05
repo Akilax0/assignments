@@ -7,6 +7,8 @@
  *  output, so headers and global definitions are placed here to be visible
  * to the code in the file.  Don't remove anything that was here initially
  */
+
+
 %{
 #include <cool-parse.h>
 #include <stringtab.h>

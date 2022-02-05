@@ -141,3 +141,18 @@ Usually the .flex file contains four main parts divided as
 - new
 - of
 - not
+
+
+
+yytext -> Matched text
+yyleng -> Matched text length
+yylex()
+ECHO -> output yytext
+REJECT -> run the next best rule
+BEGIN -> followed by start condition name to place scanner
+yymore() -> if scanner matches another rule appends ytext to next token
+yyless(n) -> skips first n characters of yytext
+unput(c) -> put c in input file and remove yytext
+input() -> reads next character from input
+
+
