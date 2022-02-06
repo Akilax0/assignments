@@ -161,6 +161,9 @@ Defined as string with at least one character starting with an lowercase.
 On object identifier rule:
     Assign symbol to the return of adding yytext to the idtable
     
+### Special Notaion
+
+
 
 
 ### Keywords
@@ -182,6 +185,24 @@ On object identifier rule:
 - of
 - not
 
+Defined as exact keywords case insensitive 
+    (?i:<keyword>)
+
+
+On keyword rule:
+    return token for that keyword using definitions from cool-parser.h
+
+
+
+Boolean true and false
+
+
+Defined as first letter simple and rest case insensitive
+    true    -> t(?i:rue)
+    false   -> f(?i:alse)
+
+On boolean rule 
+    return token as BOOL_CONST and assign cool_yylval.boolean as true or false
 
 
 yytext -> Matched text

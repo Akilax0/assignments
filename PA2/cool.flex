@@ -140,6 +140,7 @@ TRUE		t(?i:rue)
  /*
   *  KEYWORDS
   */
+
 {CLASS}	    {return CLASS;}
 {ELSE}	    {return ELSE;}
 {FI}	    {return FI;}
@@ -155,9 +156,30 @@ TRUE		t(?i:rue)
 {NEW}       {return NEW;}
 {OF}        {return OF;}
 {NOT}       {return NOT;}
-{DARROW}    {return DARROW;}
-{ASSIGN}    {return ASSIGN;}
-{LE}        {return LE;}
+
+ /*
+  *  EXTRA TOKENS
+  */
+
+"("		{return '(';}
+")"		{return ')';}
+"."		{return '.';}
+"@"		{return '@';}
+"~"		{return '~';}
+"*"		{return '*';}
+"/"		{return '/';}
+"+"		{return '+';}
+"-"		{return '-';}
+{LE}	    	{return LE;}
+"<"		{return '<';}
+"="		{return '=';}
+{ASSIGN}	{return ASSIGN;}
+"{"		{return '{';}
+"}"		{return '}';}
+":"		{return ':';}
+","	 	{return ',';}
+";"		{return ';';}
+{DARROW}	{return DARROW;}
 
 
  /*

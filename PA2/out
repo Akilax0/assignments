@@ -1,8 +1,11 @@
 ./lexer test.cl
 #name "test.cl"
-(* #1 OBJECTID models
+#1 '('
+#1 '*'
+ #1 OBJECTID models
  #1 OBJECTID one
--#1 OBJECTID dimensional
+#1 '-'
+#1 OBJECTID dimensional
  #1 OBJECTID cellular
  #1 OBJECTID automaton
  #1 OBJECTID on
@@ -17,130 +20,218 @@
  #1 OBJECTID faked
  #1 OBJECTID as
  #1 TYPEID Strings
-,
+#1 ','
+
    #1 TYPEID X
 '#1 OBJECTID s
  #1 OBJECTID respresent
  #1 OBJECTID live
  #1 OBJECTID cells
-, #1 OBJECTID dots
+#1 ','
+ #1 OBJECTID dots
  #1 OBJECTID represent
  #1 OBJECTID dead
  #1 OBJECTID cells
-,
+#1 ','
+
    #1 OBJECTID no
  #1 OBJECTID error
  #1 OBJECTID checking
  #1 OBJECTID is
  #1 OBJECTID done
- *)
+ #1 '*'
+#1 ')'
+
 #1 CLASS
  #1 TYPEID CellularAutomaton
  #1 INHERITS
  #1 TYPEID IO
- {
+ #1 '{'
+
     #1 OBJECTID population_map
- : #1 TYPEID String
-;
+ #1 ':'
+ #1 TYPEID String
+#1 ';'
+
    
     #1 OBJECTID init
-(#1 OBJECTID map
- : #1 TYPEID String
-) : #1 TYPEID SELF_TYPE
- {
-        {
+#1 '('
+#1 OBJECTID map
+ #1 ':'
+ #1 TYPEID String
+#1 ')'
+ #1 ':'
+ #1 TYPEID SELF_TYPE
+ #1 '{'
+
+        #1 '{'
+
             #1 OBJECTID population_map
  #1 ASSIGN
  #1 OBJECTID map
-;
+#1 ';'
+
             #1 OBJECTID self
-;
-        }
-    };
+#1 ';'
+
+        #1 '}'
+
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID print
-() : #1 TYPEID SELF_TYPE
- {
-        {
+#1 '('
+#1 ')'
+ #1 ':'
+ #1 TYPEID SELF_TYPE
+ #1 '{'
+
+        #1 '{'
+
             #1 OBJECTID out_string
-(#1 OBJECTID population_map
-.#1 OBJECTID concat
-("\#1 OBJECTID n
-"));
+#1 '('
+#1 OBJECTID population_map
+#1 '.'
+#1 OBJECTID concat
+#1 '('
+"\#1 OBJECTID n
+"#1 ')'
+#1 ')'
+#1 ';'
+
             #1 OBJECTID self
-;
-        }
-    };
+#1 ';'
+
+        #1 '}'
+
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID num_cells
-() : #1 TYPEID Int
- {
+#1 '('
+#1 ')'
+ #1 ':'
+ #1 TYPEID Int
+ #1 '{'
+
         #1 OBJECTID population_map
-.#1 OBJECTID length
-()
-    };
+#1 '.'
+#1 OBJECTID length
+#1 '('
+#1 ')'
+
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID cell
-(#1 OBJECTID position
- : #1 TYPEID Int
-) : #1 TYPEID String
- {
+#1 '('
+#1 OBJECTID position
+ #1 ':'
+ #1 TYPEID Int
+#1 ')'
+ #1 ':'
+ #1 TYPEID String
+ #1 '{'
+
         #1 OBJECTID population_map
-.#1 OBJECTID substr
-(#1 OBJECTID position
-, #1 INT_CONST 1
-)
-    };
+#1 '.'
+#1 OBJECTID substr
+#1 '('
+#1 OBJECTID position
+#1 ','
+ #1 INT_CONST 1
+#1 ')'
+
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID cell_left_neighbor
-(#1 OBJECTID position
- : #1 TYPEID Int
-) : #1 TYPEID String
- {
+#1 '('
+#1 OBJECTID position
+ #1 ':'
+ #1 TYPEID Int
+#1 ')'
+ #1 ':'
+ #1 TYPEID String
+ #1 '{'
+
         #1 OBJECTID if
  #1 OBJECTID position
- = #1 INT_CONST 0
+ #1 '='
+ #1 INT_CONST 0
  #1 THEN
 
             #1 OBJECTID cell
-(#1 OBJECTID num_cells
-() - #1 INT_CONST 1
-)
+#1 '('
+#1 OBJECTID num_cells
+#1 '('
+#1 ')'
+ #1 '-'
+ #1 INT_CONST 1
+#1 ')'
+
         #1 ELSE
 
             #1 OBJECTID cell
-(#1 OBJECTID position
- - #1 INT_CONST 1
-)
+#1 '('
+#1 OBJECTID position
+ #1 '-'
+ #1 INT_CONST 1
+#1 ')'
+
         #1 FI
 
-    };
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID cell_right_neighbor
-(#1 OBJECTID position
- : #1 TYPEID Int
-) : #1 TYPEID String
- {
+#1 '('
+#1 OBJECTID position
+ #1 ':'
+ #1 TYPEID Int
+#1 ')'
+ #1 ':'
+ #1 TYPEID String
+ #1 '{'
+
         #1 OBJECTID if
  #1 OBJECTID position
- = #1 OBJECTID num_cells
-() - #1 INT_CONST 1
+ #1 '='
+ #1 OBJECTID num_cells
+#1 '('
+#1 ')'
+ #1 '-'
+ #1 INT_CONST 1
  #1 THEN
 
             #1 OBJECTID cell
-(#1 INT_CONST 0
-)
+#1 '('
+#1 INT_CONST 0
+#1 ')'
+
         #1 ELSE
 
             #1 OBJECTID cell
-(#1 OBJECTID position
- + #1 INT_CONST 1
-)
+#1 '('
+#1 OBJECTID position
+ #1 '+'
+ #1 INT_CONST 1
+#1 ')'
+
         #1 FI
 
-    };
+    #1 '}'
+#1 ';'
+
    
-    (* #1 OBJECTID a
+    #1 '('
+#1 '*'
+ #1 OBJECTID a
  #1 OBJECTID cell
  #1 OBJECTID will
  #1 OBJECTID live
@@ -157,133 +248,210 @@
        #1 OBJECTID neighbors
  #1 OBJECTID are
  #1 OBJECTID alive
- *)
+ #1 '*'
+#1 ')'
+
     #1 OBJECTID cell_at_next_evolution
-(#1 OBJECTID position
- : #1 TYPEID Int
-) : #1 TYPEID String
- {
+#1 '('
+#1 OBJECTID position
+ #1 ':'
+ #1 TYPEID Int
+#1 ')'
+ #1 ':'
+ #1 TYPEID String
+ #1 '{'
+
         #1 OBJECTID if
- (#1 OBJECTID if
+ #1 '('
+#1 OBJECTID if
  #1 OBJECTID cell
-(#1 OBJECTID position
-) = "#1 TYPEID X
+#1 '('
+#1 OBJECTID position
+#1 ')'
+ #1 '='
+ "#1 TYPEID X
 " #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
  #1 FI
 
-            + #1 OBJECTID if
+            #1 '+'
+ #1 OBJECTID if
  #1 OBJECTID cell_left_neighbor
-(#1 OBJECTID position
-) = "#1 TYPEID X
+#1 '('
+#1 OBJECTID position
+#1 ')'
+ #1 '='
+ "#1 TYPEID X
 " #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
  #1 FI
 
-            + #1 OBJECTID if
+            #1 '+'
+ #1 OBJECTID if
  #1 OBJECTID cell_right_neighbor
-(#1 OBJECTID position
-) = "#1 TYPEID X
+#1 '('
+#1 OBJECTID position
+#1 ')'
+ #1 '='
+ "#1 TYPEID X
 " #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
  #1 FI
 
-            = #1 INT_CONST 1
-)
+            #1 '='
+ #1 INT_CONST 1
+#1 ')'
+
         #1 THEN
 
             "#1 TYPEID X
 "
         #1 ELSE
 
-            '.'
+            '#1 '.'
+'
         #1 FI
 
-    };
+    #1 '}'
+#1 ';'
+
    
     #1 OBJECTID evolve
-() : #1 TYPEID SELF_TYPE
- {
-        (#1 LET
+#1 '('
+#1 ')'
+ #1 ':'
+ #1 TYPEID SELF_TYPE
+ #1 '{'
+
+        #1 '('
+#1 LET
  #1 OBJECTID position
- : #1 TYPEID Int
+ #1 ':'
+ #1 TYPEID Int
  #1 IN
 
-        (#1 LET
+        #1 '('
+#1 LET
  #1 OBJECTID num
- : #1 TYPEID Int
+ #1 ':'
+ #1 TYPEID Int
  #1 ASSIGN
  #1 OBJECTID num_cells
 [] #1 IN
 
-        (#1 LET
+        #1 '('
+#1 LET
  #1 OBJECTID temp
- : #1 TYPEID String
+ #1 ':'
+ #1 TYPEID String
  #1 IN
 
-            {
+            #1 '{'
+
                 #1 OBJECTID while
  #1 OBJECTID position
- < #1 OBJECTID num
+ #1 '<'
+ #1 OBJECTID num
  #1 LOOP
 
-                    {
+                    #1 '{'
+
                         #1 OBJECTID temp
  #1 ASSIGN
  #1 OBJECTID temp
-.#1 OBJECTID concat
-(#1 OBJECTID cell_at_next_evolution
-(#1 OBJECTID position
-));
+#1 '.'
+#1 OBJECTID concat
+#1 '('
+#1 OBJECTID cell_at_next_evolution
+#1 '('
+#1 OBJECTID position
+#1 ')'
+#1 ')'
+#1 ';'
+
                         #1 OBJECTID position
  #1 ASSIGN
  #1 OBJECTID position
- + #1 INT_CONST 1
-;
-                    }
+ #1 '+'
+ #1 INT_CONST 1
+#1 ';'
+
+                    #1 '}'
+
                 #1 POOL
-;
+#1 ';'
+
                 #1 OBJECTID population_map
  #1 ASSIGN
  #1 OBJECTID temp
-;
+#1 ';'
+
                 #1 OBJECTID self
-;
-            }
-        ) ) )
-    };
-};
+#1 ';'
+
+            #1 '}'
+
+        #1 ')'
+ #1 ')'
+ #1 ')'
+
+    #1 '}'
+#1 ';'
+
+#1 '}'
+#1 ';'
+
 
 #1 CLASS
  #1 TYPEID Main
- {
+ #1 '{'
+
     #1 OBJECTID cells
- : #1 TYPEID CellularAutomaton
-;
+ #1 ':'
+ #1 TYPEID CellularAutomaton
+#1 ';'
+
    
     #1 OBJECTID main
-() : #1 TYPEID SELF_TYPE
- {
-        {
+#1 '('
+#1 ')'
+ #1 ':'
+ #1 TYPEID SELF_TYPE
+ #1 '{'
+
+        #1 '{'
+
             #1 OBJECTID cells
  #1 ASSIGN
- (#1 NEW
+ #1 '('
+#1 NEW
  #1 TYPEID CellularAutomaton
-).#1 OBJECTID init
-("         #1 TYPEID X
-         ");
+#1 ')'
+#1 '.'
+#1 OBJECTID init
+#1 '('
+"         #1 TYPEID X
+         "#1 ')'
+#1 ';'
+
             #1 OBJECTID cells
-.#1 OBJECTID print
-();
-            (#1 LET
+#1 '.'
+#1 OBJECTID print
+#1 '('
+#1 ')'
+#1 ';'
+
+            #1 '('
+#1 LET
  #1 OBJECTID countdown
- : #1 TYPEID Int
+ #1 ':'
+ #1 TYPEID Int
  #1 ASSIGN
  #1 INT_CONST 20
  #1 IN
@@ -293,27 +461,48 @@
  > #1 INT_CONST 0
  #1 LOOP
 
-                    {
+                    #1 '{'
+
                         #1 OBJECTID cells
-.#1 OBJECTID evolve
-();
+#1 '.'
+#1 OBJECTID evolve
+#1 '('
+#1 ')'
+#1 ';'
+
                         #1 OBJECTID cells
-.#1 OBJECTID print
-();
+#1 '.'
+#1 OBJECTID print
+#1 '('
+#1 ')'
+#1 ';'
+
                         #1 OBJECTID countdown
  #1 ASSIGN
  #1 OBJECTID countdown
- - #1 INT_CONST 1
-;
+ #1 '-'
+ #1 INT_CONST 1
+#1 ';'
+
                     
                 #1 POOL
 
-            );  (* #1 OBJECTID end
+            #1 ')'
+#1 ';'
+  #1 '('
+#1 '*'
+ #1 OBJECTID end
  #1 LET
  #1 OBJECTID countdown
 
             #1 OBJECTID self
-;
-        }
-    };
-};
+#1 ';'
+
+        #1 '}'
+
+    #1 '}'
+#1 ';'
+
+#1 '}'
+#1 ';'
+
