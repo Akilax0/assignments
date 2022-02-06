@@ -120,7 +120,47 @@ Usually the .flex file contains four main parts divided as
     %%
     User Subroutines   -> C code appended to the lexical analyzer
 
-## Current Implementations
+
+## LEXICAL STRUCTURE
+
+- Integers
+- Type identifiers
+- Object idnetifiers
+- special notation
+- strings
+- keywords
+- whitespaces
+
+
+
+### Integers
+
+
+Defined as non-empty strings from 0-9.
+    [0-9]+
+
+On integer rule:
+    Assign symbol to the return of adding yytext to the inttable.
+    
+
+
+### Type Identifiers
+
+Defined as string with at least one character starting with an Uppercase.
+    [A-Z]([a-zA-Z0-9_])*
+
+On type identifier rule:
+    Assign symbol to the return of adding yytext to the idtable
+    
+
+### Object Identifiers
+
+Defined as string with at least one character starting with an lowercase.
+    [a-z]([a-zA-Z0-9_])*
+
+On object identifier rule:
+    Assign symbol to the return of adding yytext to the idtable
+    
 
 
 ### Keywords

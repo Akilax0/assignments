@@ -1,102 +1,194 @@
 ./lexer test.cl
 #name "test.cl"
-(* models one-dimensional cellular automaton on a circle #1 OF
- #1 FI
-nite radius
-   arrays are faked as Str#1 IN
-gs,
-   X's respresent live cells, dots represent dead cells,
-   no error check#1 IN
-g is done *)
-#1 CLASS
- CellularAutomaton #1 INHERITS
- IO {
-    population_map : Str#1 IN
-g;
-   
-    #1 IN
-it(map : Str#1 IN
-g) : SELF_TYPE {
-        {
-            population_map #1 ASSIGN
- map;
-            self;
-        }
-    };
-   
-    pr#1 IN
-t() : SELF_TYPE {
-        {
-            out_str#1 IN
-g(population_map.concat("\n"));
-            self;
-        }
-    };
-   
-    num_cells() : #1 IN
-t {
-        population_map.length()
-    };
-   
-    cell(position : #1 IN
-t) : Str#1 IN
-g {
-        population_map.substr(position, #1 INT_CONST 1
-)
-    };
-   
-    cell_left_neighbor(position : #1 IN
-t) : Str#1 IN
-g {
-        if position = #1 INT_CONST 0
- #1 THEN
-
-            cell(num_cells() - #1 INT_CONST 1
-)
-        #1 ELSE
-
-            cell(position - #1 INT_CONST 1
-)
-        #1 FI
-
-    };
-   
-    cell_right_neighbor(position : #1 IN
-t) : Str#1 IN
-g {
-        if position = num_cells() - #1 INT_CONST 1
- #1 THEN
-
-            cell(#1 INT_CONST 0
-)
-        #1 ELSE
-
-            cell(position + #1 INT_CONST 1
-)
-        #1 FI
-
-    };
-   
-    (* a cell will live if exactly #1 INT_CONST 1
+(* #1 OBJECTID models
+ #1 OBJECTID one
+-#1 OBJECTID dimensional
+ #1 OBJECTID cellular
+ #1 OBJECTID automaton
+ #1 OBJECTID on
+ #1 OBJECTID a
+ #1 OBJECTID circle
  #1 OF
- itself and it's immediate
-       neighbors are alive *)
-    cell_at_next_evolution(position : #1 IN
-t) : Str#1 IN
-g {
-        if (if cell(position) = "X" #1 THEN
+ #1 OBJECTID finite
+ #1 OBJECTID radius
+
+   #1 OBJECTID arrays
+ #1 OBJECTID are
+ #1 OBJECTID faked
+ #1 OBJECTID as
+ #1 TYPEID Strings
+,
+   #1 TYPEID X
+'#1 OBJECTID s
+ #1 OBJECTID respresent
+ #1 OBJECTID live
+ #1 OBJECTID cells
+, #1 OBJECTID dots
+ #1 OBJECTID represent
+ #1 OBJECTID dead
+ #1 OBJECTID cells
+,
+   #1 OBJECTID no
+ #1 OBJECTID error
+ #1 OBJECTID checking
+ #1 OBJECTID is
+ #1 OBJECTID done
+ *)
+#1 CLASS
+ #1 TYPEID CellularAutomaton
+ #1 INHERITS
+ #1 TYPEID IO
+ {
+    #1 OBJECTID population_map
+ : #1 TYPEID String
+;
+   
+    #1 OBJECTID init
+(#1 OBJECTID map
+ : #1 TYPEID String
+) : #1 TYPEID SELF_TYPE
+ {
+        {
+            #1 OBJECTID population_map
+ #1 ASSIGN
+ #1 OBJECTID map
+;
+            #1 OBJECTID self
+;
+        }
+    };
+   
+    #1 OBJECTID print
+() : #1 TYPEID SELF_TYPE
+ {
+        {
+            #1 OBJECTID out_string
+(#1 OBJECTID population_map
+.#1 OBJECTID concat
+("\#1 OBJECTID n
+"));
+            #1 OBJECTID self
+;
+        }
+    };
+   
+    #1 OBJECTID num_cells
+() : #1 TYPEID Int
+ {
+        #1 OBJECTID population_map
+.#1 OBJECTID length
+()
+    };
+   
+    #1 OBJECTID cell
+(#1 OBJECTID position
+ : #1 TYPEID Int
+) : #1 TYPEID String
+ {
+        #1 OBJECTID population_map
+.#1 OBJECTID substr
+(#1 OBJECTID position
+, #1 INT_CONST 1
+)
+    };
+   
+    #1 OBJECTID cell_left_neighbor
+(#1 OBJECTID position
+ : #1 TYPEID Int
+) : #1 TYPEID String
+ {
+        #1 OBJECTID if
+ #1 OBJECTID position
+ = #1 INT_CONST 0
+ #1 THEN
+
+            #1 OBJECTID cell
+(#1 OBJECTID num_cells
+() - #1 INT_CONST 1
+)
+        #1 ELSE
+
+            #1 OBJECTID cell
+(#1 OBJECTID position
+ - #1 INT_CONST 1
+)
+        #1 FI
+
+    };
+   
+    #1 OBJECTID cell_right_neighbor
+(#1 OBJECTID position
+ : #1 TYPEID Int
+) : #1 TYPEID String
+ {
+        #1 OBJECTID if
+ #1 OBJECTID position
+ = #1 OBJECTID num_cells
+() - #1 INT_CONST 1
+ #1 THEN
+
+            #1 OBJECTID cell
+(#1 INT_CONST 0
+)
+        #1 ELSE
+
+            #1 OBJECTID cell
+(#1 OBJECTID position
+ + #1 INT_CONST 1
+)
+        #1 FI
+
+    };
+   
+    (* #1 OBJECTID a
+ #1 OBJECTID cell
+ #1 OBJECTID will
+ #1 OBJECTID live
+ #1 OBJECTID if
+ #1 OBJECTID exactly
+ #1 INT_CONST 1
+ #1 OF
+ #1 OBJECTID itself
+ #1 OBJECTID and
+ #1 OBJECTID it
+'#1 OBJECTID s
+ #1 OBJECTID immediate
+
+       #1 OBJECTID neighbors
+ #1 OBJECTID are
+ #1 OBJECTID alive
+ *)
+    #1 OBJECTID cell_at_next_evolution
+(#1 OBJECTID position
+ : #1 TYPEID Int
+) : #1 TYPEID String
+ {
+        #1 OBJECTID if
+ (#1 OBJECTID if
+ #1 OBJECTID cell
+(#1 OBJECTID position
+) = "#1 TYPEID X
+" #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
  #1 FI
 
-            + if cell_left_neighbor(position) = "X" #1 THEN
+            + #1 OBJECTID if
+ #1 OBJECTID cell_left_neighbor
+(#1 OBJECTID position
+) = "#1 TYPEID X
+" #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
  #1 FI
 
-            + if cell_right_neighbor(position) = "X" #1 THEN
+            + #1 OBJECTID if
+ #1 OBJECTID cell_right_neighbor
+(#1 OBJECTID position
+) = "#1 TYPEID X
+" #1 THEN
  #1 INT_CONST 1
  #1 ELSE
  #1 INT_CONST 0
@@ -106,7 +198,8 @@ g {
 )
         #1 THEN
 
-            "X"
+            "#1 TYPEID X
+"
         #1 ELSE
 
             '.'
@@ -114,76 +207,113 @@ g {
 
     };
    
-    evolve() : SELF_TYPE {
+    #1 OBJECTID evolve
+() : #1 TYPEID SELF_TYPE
+ {
         (#1 LET
- position : #1 IN
-t #1 IN
+ #1 OBJECTID position
+ : #1 TYPEID Int
+ #1 IN
 
         (#1 LET
- num : #1 IN
-t #1 ASSIGN
- num_cells[] #1 IN
+ #1 OBJECTID num
+ : #1 TYPEID Int
+ #1 ASSIGN
+ #1 OBJECTID num_cells
+[] #1 IN
 
         (#1 LET
- temp : Str#1 IN
-g #1 IN
+ #1 OBJECTID temp
+ : #1 TYPEID String
+ #1 IN
 
             {
-                while position < num #1 LOOP
+                #1 OBJECTID while
+ #1 OBJECTID position
+ < #1 OBJECTID num
+ #1 LOOP
 
                     {
-                        temp #1 ASSIGN
- temp.concat(cell_at_next_evolution(position));
-                        position #1 ASSIGN
- position + #1 INT_CONST 1
+                        #1 OBJECTID temp
+ #1 ASSIGN
+ #1 OBJECTID temp
+.#1 OBJECTID concat
+(#1 OBJECTID cell_at_next_evolution
+(#1 OBJECTID position
+));
+                        #1 OBJECTID position
+ #1 ASSIGN
+ #1 OBJECTID position
+ + #1 INT_CONST 1
 ;
                     }
                 #1 POOL
 ;
-                population_map #1 ASSIGN
- temp;
-                self;
+                #1 OBJECTID population_map
+ #1 ASSIGN
+ #1 OBJECTID temp
+;
+                #1 OBJECTID self
+;
             }
         ) ) )
     };
 };
 
 #1 CLASS
- Ma#1 IN
+ #1 TYPEID Main
  {
-    cells : CellularAutomaton;
+    #1 OBJECTID cells
+ : #1 TYPEID CellularAutomaton
+;
    
-    ma#1 IN
-() : SELF_TYPE {
+    #1 OBJECTID main
+() : #1 TYPEID SELF_TYPE
+ {
         {
-            cells #1 ASSIGN
+            #1 OBJECTID cells
+ #1 ASSIGN
  (#1 NEW
- CellularAutomaton).#1 IN
-it("         X         ");
-            cells.pr#1 IN
-t();
+ #1 TYPEID CellularAutomaton
+).#1 OBJECTID init
+("         #1 TYPEID X
+         ");
+            #1 OBJECTID cells
+.#1 OBJECTID print
+();
             (#1 LET
- countdown : #1 IN
-t #1 ASSIGN
+ #1 OBJECTID countdown
+ : #1 TYPEID Int
+ #1 ASSIGN
  #1 INT_CONST 20
  #1 IN
 
-                while countdown > #1 INT_CONST 0
+                #1 OBJECTID while
+ #1 OBJECTID countdown
+ > #1 INT_CONST 0
  #1 LOOP
 
                     {
-                        cells.evolve();
-                        cells.pr#1 IN
-t();
-                        countdown #1 ASSIGN
- countdown - #1 INT_CONST 1
+                        #1 OBJECTID cells
+.#1 OBJECTID evolve
+();
+                        #1 OBJECTID cells
+.#1 OBJECTID print
+();
+                        #1 OBJECTID countdown
+ #1 ASSIGN
+ #1 OBJECTID countdown
+ - #1 INT_CONST 1
 ;
                     
                 #1 POOL
 
-            );  (* end #1 LET
- countdown
-            self;
+            );  (* #1 OBJECTID end
+ #1 LET
+ #1 OBJECTID countdown
+
+            #1 OBJECTID self
+;
         }
     };
 };

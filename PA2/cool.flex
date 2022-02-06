@@ -47,10 +47,7 @@ extern YYSTYPE cool_yylval;
 
 
 
-int str_count = 0; 
-
-
-
+int int_ct = 0; 
 
 
 %}
@@ -72,9 +69,9 @@ LE              <=
 
 OTHER           [+-*/{}()*/.,;:]
 
+/* INTEGERS */
 DIGIT          [0-9]
 INTEGER        [0-9]+
-
 
 
 IDENTIFIRE    [a-zA-Z][a-zA-Z0-9_]*
@@ -170,8 +167,26 @@ NOT		(?i:not)
   */
 
 {INTEGER}   {
-		cool_yylval.symbol = new IntEntry(yytext, MAX_STR_CONST, str_count++);
+		cool_yylval.symbol = inttable.add_string(yytext); /* new IntEntry(yytext,
+								  MAX_STR_CONST, int_ct++); */
 		return (INT_CONST);
 	    }
 
+
+ /*
+  *  TYPE IDENTIFIER
+  */
+
+{TYPEID}   {
+		cool_yylval.symbol = idtable.add_string(yytext); 
+		return (TYPEID);
+	    }
+ /*
+  *  OBJECT IDENTIFIER
+  */
+
+{OBJECTID}   {
+		cool_yylval.symbol = idtable.add_string(yytext); 
+		return (OBJECTID);
+	    }
 %%
