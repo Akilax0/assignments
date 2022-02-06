@@ -102,7 +102,8 @@ NEW		(?i:new)
 OF		(?i:of)
 NOT		(?i:not)
 
-
+FALSE		f(?i:alse)
+TRUE		t(?i:rue)
 
 
 
@@ -139,9 +140,6 @@ NOT		(?i:not)
  /*
   *  KEYWORDS
   */
-
-
-
 {CLASS}	    {return CLASS;}
 {ELSE}	    {return ELSE;}
 {FI}	    {return FI;}
@@ -161,6 +159,22 @@ NOT		(?i:not)
 {ASSIGN}    {return ASSIGN;}
 {LE}        {return LE;}
 
+
+ /*
+  *  BOOLEAN
+  */
+
+{TRUE}	{
+	    cool_yylval.boolean = true;
+	    return (BOOL_CONST);
+      
+	}
+
+{FALSE}	{
+	    cool_yylval.boolean = false;
+	    return (BOOL_CONST);
+      
+	}
 
  /*
   *  INTEGER
@@ -189,4 +203,18 @@ NOT		(?i:not)
 		cool_yylval.symbol = idtable.add_string(yytext); 
 		return (OBJECTID);
 	    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 %%
