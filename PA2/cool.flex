@@ -85,6 +85,8 @@ BEGIN_COMMENT		\(\*
 END_COMMENT		\*\)
 LINE_COMMENT		--.*
 
+NEW_LINE		\n
+
 /* KEYWORDS*/
 CLASS		(?i:class)
 ELSE		(?i:else)
@@ -116,6 +118,25 @@ TRUE		t(?i:rue)
  /*
   *  Nested comments
   */
+   {NEW_LINE}  {curr_lineno++;}
+   {BEGIN_COMMENT}	{BEGIN(COMMENT);}		
+
+  {END_COMMENT} {
+    cool_yylval.error_msg = "Unmatched *)";
+    return ERROR;
+  }
+
+  <COMMENT>{
+
+    {END_COMMENT}    {BEGIN(INITIAL);}
+
+    <<EOF>> {
+      BEGIN(INITIAL);
+      cool_yylval.error_msg = "EOFin comment";
+      return ERROR;
+    }
+
+  }
 
 
  /*
