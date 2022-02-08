@@ -58,7 +58,7 @@ int int_ct = 0;
 
 
 
-
+/ * Exclusive start condtart condition COMMENT * /
 
 %x COMMENT
 %S STRING_CONST
@@ -116,33 +116,28 @@ TRUE		t(?i:rue)
 %%
 
  /*
-  *  Nested comments
+  *  comments
   */
-   {NEW_LINE}  {curr_lineno++;}
-   {BEGIN_COMMENT}	{BEGIN(COMMENT);}		
 
-  {END_COMMENT} {
+
+{NEW_LINE}  {curr_lineno++;}
+{BEGIN_COMMENT}	{BEGIN(COMMENT);}		
+
+{INTIAL,END_COMMENT} {
     cool_yylval.error_msg = "Unmatched *)";
     return ERROR;
-  }
+}
 
-  <COMMENT>{
+<COMMENT>{
 
-    {END_COMMENT}    {BEGIN(INITIAL);}
+  {END_COMMENT}    {BEGIN(INITIAL);}
 
-    <<EOF>> {
+<<EOF>> {
       BEGIN(INITIAL);
       cool_yylval.error_msg = "EOFin comment";
       return ERROR;
     }
-
-  }
-
-
- /*
-  *  The multiple-character operators.
-  */
-{DARROW}		{ return (DARROW); }
+}
 
  /*
   * Keywords are case-insensitive except for the values true and false,

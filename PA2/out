@@ -1,508 +1,351 @@
 ./lexer test.cl
 #name "test.cl"
-#1 '('
-#1 '*'
- #1 OBJECTID models
- #1 OBJECTID one
-#1 '-'
-#1 OBJECTID dimensional
- #1 OBJECTID cellular
- #1 OBJECTID automaton
- #1 OBJECTID on
- #1 OBJECTID a
- #1 OBJECTID circle
- #1 OF
- #1 OBJECTID finite
- #1 OBJECTID radius
-
-   #1 OBJECTID arrays
- #1 OBJECTID are
- #1 OBJECTID faked
- #1 OBJECTID as
- #1 TYPEID Strings
-#1 ','
-
-   #1 TYPEID X
-'#1 OBJECTID s
- #1 OBJECTID respresent
- #1 OBJECTID live
- #1 OBJECTID cells
-#1 ','
- #1 OBJECTID dots
- #1 OBJECTID represent
- #1 OBJECTID dead
- #1 OBJECTID cells
-#1 ','
-
-   #1 OBJECTID no
- #1 OBJECTID error
- #1 OBJECTID checking
- #1 OBJECTID is
- #1 OBJECTID done
- #1 '*'
-#1 ')'
-
-#1 CLASS
- #1 TYPEID CellularAutomaton
- #1 INHERITS
- #1 TYPEID IO
- #1 '{'
-
-    #1 OBJECTID population_map
- #1 ':'
- #1 TYPEID String
-#1 ';'
-
-   
-    #1 OBJECTID init
-#1 '('
-#1 OBJECTID map
- #1 ':'
- #1 TYPEID String
-#1 ')'
- #1 ':'
- #1 TYPEID SELF_TYPE
- #1 '{'
-
-        #1 '{'
-
-            #1 OBJECTID population_map
- #1 ASSIGN
- #1 OBJECTID map
-#1 ';'
-
-            #1 OBJECTID self
-#1 ';'
-
-        #1 '}'
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID print
-#1 '('
-#1 ')'
- #1 ':'
- #1 TYPEID SELF_TYPE
- #1 '{'
-
-        #1 '{'
-
-            #1 OBJECTID out_string
-#1 '('
-#1 OBJECTID population_map
-#1 '.'
-#1 OBJECTID concat
-#1 '('
-"\#1 OBJECTID n
-"#1 ')'
-#1 ')'
-#1 ';'
-
-            #1 OBJECTID self
-#1 ';'
-
-        #1 '}'
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID num_cells
-#1 '('
-#1 ')'
- #1 ':'
- #1 TYPEID Int
- #1 '{'
-
-        #1 OBJECTID population_map
-#1 '.'
-#1 OBJECTID length
-#1 '('
-#1 ')'
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID cell
-#1 '('
-#1 OBJECTID position
- #1 ':'
- #1 TYPEID Int
-#1 ')'
- #1 ':'
- #1 TYPEID String
- #1 '{'
-
-        #1 OBJECTID population_map
-#1 '.'
-#1 OBJECTID substr
-#1 '('
-#1 OBJECTID position
-#1 ','
- #1 INT_CONST 1
-#1 ')'
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID cell_left_neighbor
-#1 '('
-#1 OBJECTID position
- #1 ':'
- #1 TYPEID Int
-#1 ')'
- #1 ':'
- #1 TYPEID String
- #1 '{'
-
-        #1 OBJECTID if
- #1 OBJECTID position
- #1 '='
- #1 INT_CONST 0
- #1 THEN
-
-            #1 OBJECTID cell
-#1 '('
-#1 OBJECTID num_cells
-#1 '('
-#1 ')'
- #1 '-'
- #1 INT_CONST 1
-#1 ')'
-
-        #1 ELSE
-
-            #1 OBJECTID cell
-#1 '('
-#1 OBJECTID position
- #1 '-'
- #1 INT_CONST 1
-#1 ')'
-
-        #1 FI
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID cell_right_neighbor
-#1 '('
-#1 OBJECTID position
- #1 ':'
- #1 TYPEID Int
-#1 ')'
- #1 ':'
- #1 TYPEID String
- #1 '{'
-
-        #1 OBJECTID if
- #1 OBJECTID position
- #1 '='
- #1 OBJECTID num_cells
-#1 '('
-#1 ')'
- #1 '-'
- #1 INT_CONST 1
- #1 THEN
-
-            #1 OBJECTID cell
-#1 '('
-#1 INT_CONST 0
-#1 ')'
-
-        #1 ELSE
-
-            #1 OBJECTID cell
-#1 '('
-#1 OBJECTID position
- #1 '+'
- #1 INT_CONST 1
-#1 ')'
-
-        #1 FI
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 '('
-#1 '*'
- #1 OBJECTID a
- #1 OBJECTID cell
- #1 OBJECTID will
- #1 OBJECTID live
- #1 OBJECTID if
- #1 OBJECTID exactly
- #1 INT_CONST 1
- #1 OF
- #1 OBJECTID itself
- #1 OBJECTID and
- #1 OBJECTID it
-'#1 OBJECTID s
- #1 OBJECTID immediate
-
-       #1 OBJECTID neighbors
- #1 OBJECTID are
- #1 OBJECTID alive
- #1 '*'
-#1 ')'
-
-    #1 OBJECTID cell_at_next_evolution
-#1 '('
-#1 OBJECTID position
- #1 ':'
- #1 TYPEID Int
-#1 ')'
- #1 ':'
- #1 TYPEID String
- #1 '{'
-
-        #1 OBJECTID if
- #1 '('
-#1 OBJECTID if
- #1 OBJECTID cell
-#1 '('
-#1 OBJECTID position
-#1 ')'
- #1 '='
- "#1 TYPEID X
-" #1 THEN
- #1 INT_CONST 1
- #1 ELSE
- #1 INT_CONST 0
- #1 FI
-
-            #1 '+'
- #1 OBJECTID if
- #1 OBJECTID cell_left_neighbor
-#1 '('
-#1 OBJECTID position
-#1 ')'
- #1 '='
- "#1 TYPEID X
-" #1 THEN
- #1 INT_CONST 1
- #1 ELSE
- #1 INT_CONST 0
- #1 FI
-
-            #1 '+'
- #1 OBJECTID if
- #1 OBJECTID cell_right_neighbor
-#1 '('
-#1 OBJECTID position
-#1 ')'
- #1 '='
- "#1 TYPEID X
-" #1 THEN
- #1 INT_CONST 1
- #1 ELSE
- #1 INT_CONST 0
- #1 FI
-
-            #1 '='
- #1 INT_CONST 1
-#1 ')'
-
-        #1 THEN
-
-            "#1 TYPEID X
-"
-        #1 ELSE
-
-            '#1 '.'
-'
-        #1 FI
-
-    #1 '}'
-#1 ';'
-
-   
-    #1 OBJECTID evolve
-#1 '('
-#1 ')'
- #1 ':'
- #1 TYPEID SELF_TYPE
- #1 '{'
-
-        #1 '('
-#1 LET
- #1 OBJECTID position
- #1 ':'
- #1 TYPEID Int
- #1 IN
-
-        #1 '('
-#1 LET
- #1 OBJECTID num
- #1 ':'
- #1 TYPEID Int
- #1 ASSIGN
- #1 OBJECTID num_cells
-[] #1 IN
-
-        #1 '('
-#1 LET
- #1 OBJECTID temp
- #1 ':'
- #1 TYPEID String
- #1 IN
-
-            #1 '{'
-
-                #1 OBJECTID while
- #1 OBJECTID position
- #1 '<'
- #1 OBJECTID num
- #1 LOOP
-
-                    #1 '{'
-
-                        #1 OBJECTID temp
- #1 ASSIGN
- #1 OBJECTID temp
-#1 '.'
-#1 OBJECTID concat
-#1 '('
-#1 OBJECTID cell_at_next_evolution
-#1 '('
-#1 OBJECTID position
-#1 ')'
-#1 ')'
-#1 ';'
-
-                        #1 OBJECTID position
- #1 ASSIGN
- #1 OBJECTID position
- #1 '+'
- #1 INT_CONST 1
-#1 ';'
-
-                    #1 '}'
-
-                #1 POOL
-#1 ';'
-
-                #1 OBJECTID population_map
- #1 ASSIGN
- #1 OBJECTID temp
-#1 ';'
-
-                #1 OBJECTID self
-#1 ';'
-
-            #1 '}'
-
-        #1 ')'
- #1 ')'
- #1 ')'
-
-    #1 '}'
-#1 ';'
-
-#1 '}'
-#1 ';'
-
-
-#1 CLASS
- #1 TYPEID Main
- #1 '{'
-
-    #1 OBJECTID cells
- #1 ':'
- #1 TYPEID CellularAutomaton
-#1 ';'
-
-   
-    #1 OBJECTID main
-#1 '('
-#1 ')'
- #1 ':'
- #1 TYPEID SELF_TYPE
- #1 '{'
-
-        #1 '{'
-
-            #1 OBJECTID cells
- #1 ASSIGN
- #1 '('
-#1 NEW
- #1 TYPEID CellularAutomaton
-#1 ')'
-#1 '.'
-#1 OBJECTID init
-#1 '('
-"         #1 TYPEID X
-         "#1 ')'
-#1 ';'
-
-            #1 OBJECTID cells
-#1 '.'
-#1 OBJECTID print
-#1 '('
-#1 ')'
-#1 ';'
-
-            #1 '('
-#1 LET
- #1 OBJECTID countdown
- #1 ':'
- #1 TYPEID Int
- #1 ASSIGN
- #1 INT_CONST 20
- #1 IN
-
-                #1 OBJECTID while
- #1 OBJECTID countdown
- > #1 INT_CONST 0
- #1 LOOP
-
-                    #1 '{'
-
-                        #1 OBJECTID cells
-#1 '.'
-#1 OBJECTID evolve
-#1 '('
-#1 ')'
-#1 ';'
-
-                        #1 OBJECTID cells
-#1 '.'
-#1 OBJECTID print
-#1 '('
-#1 ')'
-#1 ';'
-
-                        #1 OBJECTID countdown
- #1 ASSIGN
- #1 OBJECTID countdown
- #1 '-'
- #1 INT_CONST 1
-#1 ';'
-
-                    
-                #1 POOL
-
-            #1 ')'
-#1 ';'
-  #1 '('
-#1 '*'
- #1 OBJECTID end
- #1 LET
- #1 OBJECTID countdown
-
-            #1 OBJECTID self
-#1 ';'
-
-        #1 '}'
-
-    #1 '}'
-#1 ';'
-
-#1 '}'
-#1 ';'
-
+ models one-dimensional cellular automaton on a circle of finite radius
+   arrays are faked as Strings,
+   X's respresent live cells, dots represent dead cells,
+   no error checking is done #2 CLASS
+ #2 TYPEID CellularAutomaton
+ #2 INHERITS
+ #2 TYPEID IO
+ #2 '{'
+    #3 OBJECTID population_map
+ #3 ':'
+ #3 TYPEID String
+#3 ';'
+       #5 OBJECTID init
+#5 '('
+#5 OBJECTID map
+ #5 ':'
+ #5 TYPEID String
+#5 ')'
+ #5 ':'
+ #5 TYPEID SELF_TYPE
+ #5 '{'
+        #6 '{'
+            #7 OBJECTID population_map
+ #7 ASSIGN
+ #7 OBJECTID map
+#7 ';'
+            #8 OBJECTID self
+#8 ';'
+        #9 '}'
+    #10 '}'
+#10 ';'
+       #12 OBJECTID print
+#12 '('
+#12 ')'
+ #12 ':'
+ #12 TYPEID SELF_TYPE
+ #12 '{'
+        #13 '{'
+            #14 OBJECTID out_string
+#14 '('
+#14 OBJECTID population_map
+#14 '.'
+#14 OBJECTID concat
+#14 '('
+"\#14 OBJECTID n
+"#14 ')'
+#14 ')'
+#14 ';'
+            #15 OBJECTID self
+#15 ';'
+        #16 '}'
+    #17 '}'
+#17 ';'
+       #19 OBJECTID num_cells
+#19 '('
+#19 ')'
+ #19 ':'
+ #19 TYPEID Int
+ #19 '{'
+        #20 OBJECTID population_map
+#20 '.'
+#20 OBJECTID length
+#20 '('
+#20 ')'
+    #21 '}'
+#21 ';'
+       #23 OBJECTID cell
+#23 '('
+#23 OBJECTID position
+ #23 ':'
+ #23 TYPEID Int
+#23 ')'
+ #23 ':'
+ #23 TYPEID String
+ #23 '{'
+        #24 OBJECTID population_map
+#24 '.'
+#24 OBJECTID substr
+#24 '('
+#24 OBJECTID position
+#24 ','
+ #24 INT_CONST 1
+#24 ')'
+    #25 '}'
+#25 ';'
+       #27 OBJECTID cell_left_neighbor
+#27 '('
+#27 OBJECTID position
+ #27 ':'
+ #27 TYPEID Int
+#27 ')'
+ #27 ':'
+ #27 TYPEID String
+ #27 '{'
+        #28 OBJECTID if
+ #28 OBJECTID position
+ #28 '='
+ #28 INT_CONST 0
+ #28 THEN
+            #29 OBJECTID cell
+#29 '('
+#29 OBJECTID num_cells
+#29 '('
+#29 ')'
+ #29 '-'
+ #29 INT_CONST 1
+#29 ')'
+        #30 ELSE
+            #31 OBJECTID cell
+#31 '('
+#31 OBJECTID position
+ #31 '-'
+ #31 INT_CONST 1
+#31 ')'
+        #32 FI
+    #33 '}'
+#33 ';'
+       #35 OBJECTID cell_right_neighbor
+#35 '('
+#35 OBJECTID position
+ #35 ':'
+ #35 TYPEID Int
+#35 ')'
+ #35 ':'
+ #35 TYPEID String
+ #35 '{'
+        #36 OBJECTID if
+ #36 OBJECTID position
+ #36 '='
+ #36 OBJECTID num_cells
+#36 '('
+#36 ')'
+ #36 '-'
+ #36 INT_CONST 1
+ #36 THEN
+            #37 OBJECTID cell
+#37 '('
+#37 INT_CONST 0
+#37 ')'
+        #38 ELSE
+            #39 OBJECTID cell
+#39 '('
+#39 OBJECTID position
+ #39 '+'
+ #39 INT_CONST 1
+#39 ')'
+        #40 FI
+    #41 '}'
+#41 ';'
+        a cell will live if exactly 1 of itself and it's immediate
+       neighbors are alive     #44 OBJECTID cell_at_next_evolution
+#44 '('
+#44 OBJECTID position
+ #44 ':'
+ #44 TYPEID Int
+#44 ')'
+ #44 ':'
+ #44 TYPEID String
+ #44 '{'
+        #45 OBJECTID if
+ #45 '('
+#45 OBJECTID if
+ #45 OBJECTID cell
+#45 '('
+#45 OBJECTID position
+#45 ')'
+ #45 '='
+ "#45 TYPEID X
+" #45 THEN
+ #45 INT_CONST 1
+ #45 ELSE
+ #45 INT_CONST 0
+ #45 FI
+            #46 '+'
+ #46 OBJECTID if
+ #46 OBJECTID cell_left_neighbor
+#46 '('
+#46 OBJECTID position
+#46 ')'
+ #46 '='
+ "#46 TYPEID X
+" #46 THEN
+ #46 INT_CONST 1
+ #46 ELSE
+ #46 INT_CONST 0
+ #46 FI
+            #47 '+'
+ #47 OBJECTID if
+ #47 OBJECTID cell_right_neighbor
+#47 '('
+#47 OBJECTID position
+#47 ')'
+ #47 '='
+ "#47 TYPEID X
+" #47 THEN
+ #47 INT_CONST 1
+ #47 ELSE
+ #47 INT_CONST 0
+ #47 FI
+            #48 '='
+ #48 INT_CONST 1
+#48 ')'
+        #49 THEN
+            "#50 TYPEID X
+"        #51 ELSE
+            '#52 '.'
+'        #53 FI
+    #54 '}'
+#54 ';'
+       #56 OBJECTID evolve
+#56 '('
+#56 ')'
+ #56 ':'
+ #56 TYPEID SELF_TYPE
+ #56 '{'
+        #57 '('
+#57 LET
+ #57 OBJECTID position
+ #57 ':'
+ #57 TYPEID Int
+ #57 IN
+        #58 '('
+#58 LET
+ #58 OBJECTID num
+ #58 ':'
+ #58 TYPEID Int
+ #58 ASSIGN
+ #58 OBJECTID num_cells
+[] #58 IN
+        #59 '('
+#59 LET
+ #59 OBJECTID temp
+ #59 ':'
+ #59 TYPEID String
+ #59 IN
+            #60 '{'
+                #61 OBJECTID while
+ #61 OBJECTID position
+ #61 '<'
+ #61 OBJECTID num
+ #61 LOOP
+                    #62 '{'
+                        #63 OBJECTID temp
+ #63 ASSIGN
+ #63 OBJECTID temp
+#63 '.'
+#63 OBJECTID concat
+#63 '('
+#63 OBJECTID cell_at_next_evolution
+#63 '('
+#63 OBJECTID position
+#63 ')'
+#63 ')'
+#63 ';'
+                        #64 OBJECTID position
+ #64 ASSIGN
+ #64 OBJECTID position
+ #64 '+'
+ #64 INT_CONST 1
+#64 ';'
+                    #65 '}'
+                #66 POOL
+#66 ';'
+                #67 OBJECTID population_map
+ #67 ASSIGN
+ #67 OBJECTID temp
+#67 ';'
+                #68 OBJECTID self
+#68 ';'
+            #69 '}'
+        #70 ')'
+ #70 ')'
+ #70 ')'
+    #71 '}'
+#71 ';'
+#72 '}'
+#72 ';'
+#74 CLASS
+ #74 TYPEID Main
+ #74 '{'
+    #75 OBJECTID cells
+ #75 ':'
+ #75 TYPEID CellularAutomaton
+#75 ';'
+       #77 OBJECTID main
+#77 '('
+#77 ')'
+ #77 ':'
+ #77 TYPEID SELF_TYPE
+ #77 '{'
+        #78 '{'
+            #79 OBJECTID cells
+ #79 ASSIGN
+ #79 '('
+#79 NEW
+ #79 TYPEID CellularAutomaton
+#79 ')'
+#79 '.'
+#79 OBJECTID init
+#79 '('
+"         #79 TYPEID X
+         "#79 ')'
+#79 ';'
+            #80 OBJECTID cells
+#80 '.'
+#80 OBJECTID print
+#80 '('
+#80 ')'
+#80 ';'
+            #81 '('
+#81 LET
+ #81 OBJECTID countdown
+ #81 ':'
+ #81 TYPEID Int
+ #81 ASSIGN
+ #81 INT_CONST 20
+ #81 IN
+                #82 OBJECTID while
+ #82 OBJECTID countdown
+ > #82 INT_CONST 0
+ #82 LOOP
+                    #83 '{'
+                        #84 OBJECTID cells
+#84 '.'
+#84 OBJECTID evolve
+#84 '('
+#84 ')'
+#84 ';'
+                        #85 OBJECTID cells
+#85 '.'
+#85 OBJECTID print
+#85 '('
+#85 ')'
+#85 ';'
+                        #86 OBJECTID countdown
+ #86 ASSIGN
+ #86 OBJECTID countdown
+ #86 '-'
+ #86 INT_CONST 1
+#86 ';'
+                                    #88 POOL
+            #89 ')'
+#89 ';'
+   end let countdown
+            self;
+        }
+    };
+};
+#89 ERROR "EOFin comment"
