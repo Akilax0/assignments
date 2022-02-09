@@ -46,10 +46,6 @@ extern YYSTYPE cool_yylval;
  */
 
 
-
-int int_ct = 0; 
-
-
 %}
 
 /*
@@ -66,8 +62,6 @@ int int_ct = 0;
 DARROW          =>
 ASSIGN          <-
 LE              <=
-
-OTHER           [+-*/{}()*/.,;:]
 
 /* INTEGERS */
 DIGIT          [0-9]
@@ -122,7 +116,7 @@ TRUE		t(?i:rue)
 
 {NEW_LINE}  {curr_lineno++;}
 
-"--".*;
+(--).*	{}
 
 {BEGIN_COMMENT}	{BEGIN(COMMENT);}		
 

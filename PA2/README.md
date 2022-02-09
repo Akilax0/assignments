@@ -130,7 +130,7 @@ Usually the .flex file contains four main parts divided as
 - strings
 - keywords
 - whitespaces
-
+- Comments
 
 
 ### Integers
@@ -215,5 +215,23 @@ yymore() -> if scanner matches another rule appends ytext to next token
 yyless(n) -> skips first n characters of yytext
 unput(c) -> put c in input file and remove yytext
 input() -> reads next character from input
+
+### Comments
+
+
+Single line comments that take the form of 
+    -- comment
+
+Anything after a '--' gets ignored as a comment 
+
+In the case of multiline comments 
+
+We use start states
+
+Exclusive start state as COMMENT is defined to keep track of Openning and cloding of comments.
+
+On (* the comment gets started by using BEGIN(COMMENT) on comment end we BEGIN(INTIAL) state.
+	In between comments if there is an EOF present or we have an unmatched closing error message
+	will be sent. (ERROR token to parser).
 
 

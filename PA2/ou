@@ -3,7 +3,13 @@
  models one-dimensional cellular automaton on a circle of finite radius
    arrays are faked as Strings,
    X's respresent live cells, dots represent dead cells,
-   no error checking is done #6 CLASS
+   no error checking is done #3 '-'
+#3 '-'
+#3 TYPEID Is
+ #3 OBJECTID this
+ #3 OBJECTID a
+ #3 OBJECTID comment
+#6 CLASS
  #6 TYPEID CellularAutomaton
  #6 INHERITS
  #6 TYPEID IO
