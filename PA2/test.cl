@@ -2,6 +2,10 @@
    arrays are faked as Strings,
    X's respresent live cells, dots represent dead cells,
    no error checking is done *)
+
+--Is this a comment
+
+
 class CellularAutomaton inherits IO {
     population_map : String;
    

@@ -58,7 +58,7 @@ int int_ct = 0;
 
 
 
-/ * Exclusive start condtart condition COMMENT * /
+/* Exclusive start condtart condition COMMENT */
 
 %x COMMENT
 %S STRING_CONST
@@ -121,9 +121,12 @@ TRUE		t(?i:rue)
 
 
 {NEW_LINE}  {curr_lineno++;}
+
+"--".*;
+
 {BEGIN_COMMENT}	{BEGIN(COMMENT);}		
 
-{INTIAL,END_COMMENT} {
+{END_COMMENT} {
     cool_yylval.error_msg = "Unmatched *)";
     return ERROR;
 }
