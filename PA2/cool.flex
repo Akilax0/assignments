@@ -46,6 +46,9 @@ extern YYSTYPE cool_yylval;
  */
 
 
+
+int comment_depth;
+
 %}
 
 /*
@@ -54,10 +57,10 @@ extern YYSTYPE cool_yylval;
 
 
 
-/* Exclusive start condtart condition COMMENT */
+/* Exclusive start  condition COMMENT */
 
 %x COMMENT
-%S STRING_CONST
+%S STRING
 
 DARROW          =>
 ASSIGN          <-
@@ -81,6 +84,12 @@ LINE_COMMENT		--.*
 
 NEW_LINE		\n
 
+
+
+/* STRINGS */
+QUOTE \"
+
+
 /* KEYWORDS*/
 CLASS		(?i:class)
 ELSE		(?i:else)
@@ -102,11 +111,6 @@ FALSE		f(?i:alse)
 TRUE		t(?i:rue)
 
 
-
-
-
-
-
 %%
 
  /*
@@ -118,7 +122,10 @@ TRUE		t(?i:rue)
 
 (--).*	{}
 
-{BEGIN_COMMENT}	{BEGIN(COMMENT);}		
+{BEGIN_COMMENT}	{
+    BEGIN(COMMENT);
+    comment_depth++;
+}		
 
 {END_COMMENT} {
     cool_yylval.error_msg = "Unmatched *)";
@@ -127,19 +134,27 @@ TRUE		t(?i:rue)
 
 <COMMENT>{
 
-  {END_COMMENT}    {BEGIN(INITIAL);}
+    {BEGIN_COMMENT}	{
+			    ++comment_depth;
+			}
+    {END_COMMENT}   {
+		       if(--comment_depth==0)
+			       BEGIN(INITIAL);
+		   }
 
-<<EOF>> {
-      BEGIN(INITIAL);
-      cool_yylval.error_msg = "EOFin comment";
-      return ERROR;
+    <<EOF>> {
+	BEGIN(INITIAL);
+	cool_yylval.error_msg = "EOF in comment";
+	return ERROR;
     }
+
+
+    {NEW_LINE}  {curr_lineno++;}
+
+    . {}
+
 }
 
- /*
-  * Keywords are case-insensitive except for the values true and false,
-  * which must begin with a lower-case letter.
-  */
 
 
  /*
