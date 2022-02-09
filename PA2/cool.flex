@@ -120,7 +120,7 @@ TRUE		t(?i:rue)
 
 {NEW_LINE}  {curr_lineno++;}
 
-(--).*	{}
+{LINE_COMMENT}	{}
 
 {BEGIN_COMMENT}	{
     BEGIN(COMMENT);
