@@ -1,11 +1,3 @@
-flex -d -ocool-lex.cc cool.flex
-/bin/sh -ec 'g++ -MM -I. -I../../include/PA2 -I../../src/PA2 cool-lex.cc | sed '\''s/\(cool-lex\.o\)[ :]*/\1 cool-lex.d : /g'\'' > cool-lex.d'
-/bin/sh -ec 'g++ -MM -I. -I../../include/PA2 -I../../src/PA2 handle_flags.cc | sed '\''s/\(handle_flags\.o\)[ :]*/\1 handle_flags.d : /g'\'' > handle_flags.d'
-/bin/sh -ec 'g++ -MM -I. -I../../include/PA2 -I../../src/PA2 stringtab.cc | sed '\''s/\(stringtab\.o\)[ :]*/\1 stringtab.d : /g'\'' > stringtab.d'
-/bin/sh -ec 'g++ -MM -I. -I../../include/PA2 -I../../src/PA2 utilities.cc | sed '\''s/\(utilities\.o\)[ :]*/\1 utilities.d : /g'\'' > utilities.d'
-/bin/sh -ec 'g++ -MM -I. -I../../include/PA2 -I../../src/PA2 lextest.cc | sed '\''s/\(lextest\.o\)[ :]*/\1 lextest.d : /g'\'' > lextest.d'
-g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/PA2 -c cool-lex.cc
-g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/PA2 lextest.o utilities.o stringtab.o handle_flags.o cool-lex.o -lfl -o lexer
 ./lexer test.cl
 #name "test.cl"
 #9 CLASS
@@ -49,8 +41,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
 #21 '.'
 #21 OBJECTID concat
 #21 '('
-"\#21 OBJECTID n
-"#21 ')'
+#21 STR_CONST "\\n"
+#21 ')'
 #21 ')'
 #21 ';'
             #22 OBJECTID self
@@ -171,8 +163,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
 #53 OBJECTID position
 #53 ')'
  #53 '='
- "#53 TYPEID X
-" #53 THEN
+ #53 STR_CONST "X"
+ #53 THEN
  #53 INT_CONST 1
  #53 ELSE
  #53 INT_CONST 0
@@ -184,8 +176,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
 #54 OBJECTID position
 #54 ')'
  #54 '='
- "#54 TYPEID X
-" #54 THEN
+ #54 STR_CONST "X"
+ #54 THEN
  #54 INT_CONST 1
  #54 ELSE
  #54 INT_CONST 0
@@ -197,8 +189,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
 #55 OBJECTID position
 #55 ')'
  #55 '='
- "#55 TYPEID X
-" #55 THEN
+ #55 STR_CONST "X"
+ #55 THEN
  #55 INT_CONST 1
  #55 ELSE
  #55 INT_CONST 0
@@ -207,8 +199,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
  #56 INT_CONST 1
 #56 ')'
         #57 THEN
-            "#58 TYPEID X
-"        #59 ELSE
+            #58 STR_CONST "X"
+        #59 ELSE
             '#60 '.'
 '        #61 FI
     #62 '}'
@@ -304,8 +296,8 @@ g++ -g -Wall -Wno-unused -Wno-write-strings -I. -I../../include/PA2 -I../../src/
 #87 '.'
 #87 OBJECTID init
 #87 '('
-"         #87 TYPEID X
-         "#87 ')'
+#87 STR_CONST "         X         "
+#87 ')'
 #87 ';'
             #88 OBJECTID cells
 #88 '.'

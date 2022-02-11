@@ -59,8 +59,7 @@ int comment_depth;
 
 /* Exclusive start  condition COMMENT */
 
-%x COMMENT
-%S STRING
+%x COMMENT STRING
 
 DARROW          =>
 ASSIGN          <-
@@ -87,7 +86,7 @@ NEW_LINE		\n
 
 
 /* STRINGS */
-QUOTE \"
+QUOTE			\"
 
 
 /* KEYWORDS*/
@@ -163,6 +162,25 @@ TRUE		t(?i:rue)
   *  \n \t \b \f, the result is c.
   *
   */
+
+{QUOTE} {
+	    string_buf_ptr = string_buf;
+	    BEGIN(STRING);
+	}
+
+
+<STRING>{
+	{QUOTE} {
+		    *string_buf_ptr = '\0';
+		    BEGIN(INITIAL);
+		    cool_yylval.symbol = stringtable.add_string(string_buf);
+		    return STR_CONST;
+		}
+	.   {
+		    *string_buf_ptr++ = yytext[0];
+		
+	    }
+}
 
 
  /*
