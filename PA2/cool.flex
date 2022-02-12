@@ -109,6 +109,8 @@ NOT		(?i:not)
 FALSE		f(?i:alse)
 TRUE		t(?i:rue)
 
+NULL_CHARACTERS	\0
+
 
 %%
 
@@ -180,6 +182,10 @@ TRUE		t(?i:rue)
 		    *string_buf_ptr++ = yytext[0];
 		
 	    }
+	{NULL_CHARACTERS}	{
+					cool_yylval.error_msg = "String contains null character";
+    					return ERROR;
+				}
 }
 
 
