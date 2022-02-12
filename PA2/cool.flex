@@ -186,6 +186,12 @@ NULL_CHARACTERS	\0
 					cool_yylval.error_msg = "String contains null character";
     					return ERROR;
 				}
+	{NEW_LINE}	{
+				curr_lineno++;
+				cool_yylval.error_msg = "Unterminated string constant";
+				BEGIN(INITIAL);
+				return ERROR;			
+			}
 }
 
 

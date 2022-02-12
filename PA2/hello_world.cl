@@ -5,6 +5,7 @@ class Main inherits IO {
        still in the comment
 	*)
    main(): SELF_TYPE {
-	out_string("Hello, World.\n")
+	out_string("Hello, World.
+	\n")
    };
 };
