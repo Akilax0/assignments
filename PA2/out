@@ -41,7 +41,7 @@
 #21 '.'
 #21 OBJECTID concat
 #21 '('
-#21 STR_CONST "\\n"
+#21 STR_CONST "\n"
 #21 ')'
 #21 ')'
 #21 ';'
@@ -199,7 +199,7 @@
  #56 INT_CONST 1
 #56 ')'
         #57 THEN
-            #58 STR_CONST "X"
+            #58 STR_CONST "X\t\t\t"
         #59 ELSE
             '#60 '.'
 '        #61 FI

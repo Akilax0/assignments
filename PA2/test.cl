@@ -55,7 +55,7 @@ class CellularAutomaton inherits IO {
             + if cell_right_neighbor(position) = "X" then 1 else 0 fi
             = 1)
         then
-            "X"
+            "X\t\t\t"
         else
             '.'
         fi

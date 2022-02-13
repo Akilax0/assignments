@@ -45,9 +45,13 @@ extern YYSTYPE cool_yylval;
  *  Add Your own definitions here
  */
 
-
+#define ADD_STRING(c)
 
 int comment_depth;
+
+bool len_check(){
+    return (string_buf_ptr+1 < &string_buf[MAX_STR_CONST-1]);
+}
 
 %}
 
@@ -59,7 +63,7 @@ int comment_depth;
 
 /* Exclusive start  condition COMMENT */
 
-%x COMMENT STRING
+%x COMMENT STRING INVALID_STR
 
 DARROW          =>
 ASSIGN          <-
@@ -87,7 +91,7 @@ NEW_LINE		\n
 
 /* STRINGS */
 QUOTE			\"
-
+NULL_CHARACTERS		\0
 
 /* KEYWORDS*/
 CLASS		(?i:class)
@@ -109,7 +113,6 @@ NOT		(?i:not)
 FALSE		f(?i:alse)
 TRUE		t(?i:rue)
 
-NULL_CHARACTERS	\0
 
 
 %%
@@ -173,25 +176,75 @@ NULL_CHARACTERS	\0
 
 <STRING>{
 	{QUOTE} {
-		    *string_buf_ptr = '\0';
+		    *string_buf_ptr++ = '\0';
 		    BEGIN(INITIAL);
 		    cool_yylval.symbol = stringtable.add_string(string_buf);
 		    return STR_CONST;
 		}
-	.   {
-		    *string_buf_ptr++ = yytext[0];
-		
-	    }
-	{NULL_CHARACTERS}	{
+
+	{NULL_CHARACTERS} {
 					cool_yylval.error_msg = "String contains null character";
     					return ERROR;
 				}
-	{NEW_LINE}	{
+
+	{NEW_LINE} {
 				curr_lineno++;
 				cool_yylval.error_msg = "Unterminated string constant";
 				BEGIN(INITIAL);
 				return ERROR;			
 			}
+	<<EOF>>	{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "eof in string constant";
+		   return ERROR;
+	}
+
+
+	\\c {
+	    if(len_check()){
+		*string_buf_ptr++ = 'c';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+	\\t {
+	    if(len_check()){
+		*string_buf_ptr++ = '\t';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+	\\b {
+	    if(len_check()){
+		*string_buf_ptr++ = '\b';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+	\\n {
+	    if(len_check()){
+		*string_buf_ptr++ = '\n';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+	. {
+	    if(len_check()){
+		*string_buf_ptr++ = yytext[0];
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
 }
 
 
@@ -283,18 +336,4 @@ NULL_CHARACTERS	\0
 		cool_yylval.symbol = idtable.add_string(yytext); 
 		return (OBJECTID);
 	    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 %%
