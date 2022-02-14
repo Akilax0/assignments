@@ -328,4 +328,5 @@ lam.cl -> error when escaped characters in strings
 
 rest of the files had no errors.
 
-
+Custom testing done using the hello_world.cl file
+    ex:- string too long 

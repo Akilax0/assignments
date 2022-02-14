@@ -67,7 +67,7 @@ bool len_check(){
 
 /* Exclusive start  condition COMMENT */
 
-%x COMMENT STRING INVALID_STR
+%x COMMENT STRING 
 
 /* composite notations */
 DARROW          =>
@@ -78,24 +78,16 @@ LE              <=
 DIGIT          [0-9]
 INTEGER        [0-9]+
 
-
-IDENTIFIRE    [a-zA-Z][a-zA-Z0-9_]*
-
 /* Type and object identifier */
 TYPEID	    [A-Z]([A-Za-z_0-9])*
 OBJECTID    [a-z]([A-Za-z_0-9])*
-
 
 /* COMMENTS */
 BEGIN_COMMENT		\(\*
 END_COMMENT		\*\)
 LINE_COMMENT		--.*
 
-
-
 NEW_LINE		\n
-
-
 
 /* STRINGS */
 QUOTE			\"
@@ -434,7 +426,7 @@ TRUE		t(?i:rue)
  /* remove whitespaces  */ 
 [\t\r\f\v ]+ ;
 
-/* Give error for non token elements in code */
+ /* Give error for non token elements in code */
 . {
     cool_yylval.error_msg = yytext;
     return ERROR;
