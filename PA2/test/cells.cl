@@ -2,10 +2,6 @@
    arrays are faked as Strings,
    X's respresent live cells, dots represent dead cells,
    no error checking is done *)
-
---Is this a comment
-
-
 class CellularAutomaton inherits IO {
     population_map : String;
    
@@ -55,15 +51,15 @@ class CellularAutomaton inherits IO {
             + if cell_right_neighbor(position) = "X" then 1 else 0 fi
             = 1)
         then
-            "X\t\t\t"
+            "X"
         else
-            '.'
+            "."
         fi
     };
    
     evolve() : SELF_TYPE {
         (let position : Int in
-        (let num : Int <- num_cells[] in
+        (let num : Int <- num_cells() in
         (let temp : String in
             {
                 while position < num loop
@@ -87,16 +83,15 @@ class Main {
             cells <- (new CellularAutomaton).init("         X         ");
             cells.print();
             (let countdown : Int <- 20 in
-                while countdown > 0 loop
+                while 0 < countdown loop
                     {
                         cells.evolve();
                         cells.print();
                         countdown <- countdown - 1;
-                    
+                    }
                 pool
-            );  (* end let countdown*)
+            );
             self;
         }
     };
-};
 };

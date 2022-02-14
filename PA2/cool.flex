@@ -105,6 +105,8 @@ NULL_CHARACTERS		\\0
 CLASS		(?i:class)
 ELSE		(?i:else)
 FI		(?i:fi)
+IF		(?i:if)
+WHILE		(?i:while)
 IN		(?i:in)
 INHERITS	(?i:inherits)
 ISVOID		(?i:isvoid)
@@ -174,6 +176,7 @@ TRUE		t(?i:rue)
 
     /* increment on new line */
     {NEW_LINE}  {curr_lineno++;}
+    \\\n  {curr_lineno++;}
 
     /* reject all other characters inside comment  */
     . {}
@@ -279,6 +282,32 @@ TRUE		t(?i:rue)
 	    }
 	}
 
+	/* check formfeed in string if so take as \f and append to string */
+	\\f {
+	    if(len_check()){
+		*string_buf_ptr++ = '\f';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+
+	/* check escaped newline in string if so take as \n and append to string
+	 * and increment line */
+	\\\n {
+	
+	    curr_lineno++;
+
+	    if(len_check()){
+		*string_buf_ptr++ = '\n';
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	}
+
 	/* For all other characters append directly to string */
 	. {
 	    if(len_check()){
@@ -298,7 +327,9 @@ TRUE		t(?i:rue)
 
 {CLASS}	    {return CLASS;}
 {ELSE}	    {return ELSE;}
+{IF}	    {return IF;}
 {FI}	    {return FI;}
+{WHILE}	    {return WHILE;}
 {IN}	    {return IN;}
 {INHERITS}  {return INHERITS;}
 {ISVOID}    {return ISVOID;}
@@ -379,4 +410,18 @@ TRUE		t(?i:rue)
 		cool_yylval.symbol = idtable.add_string(yytext); 
 		return (OBJECTID);
 	    }
+
+ /* Whitespaces & other extras  */
+
+
+\n+ {
+   curr_lineno += yyleng;
+}
+
+[\t\r\f\v ]+ ;
+
+. {
+    cool_yylval.error_msg = yytext;
+    return ERROR;
+}
 %%
