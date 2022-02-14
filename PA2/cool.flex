@@ -42,12 +42,16 @@ extern int verbose_flag;
 extern YYSTYPE cool_yylval;
 
 /*
- *  Add Your own definitions here
+ *  Add Your own definitions here 
+ * 
+ *   #define ADD_STRING(c)
  */
 
-#define ADD_STRING(c)
-
+/**vaariable to keep track of nested comments**/
 int comment_depth;
+
+
+/**function to check length of string**/
 
 bool len_check(){
     return (string_buf_ptr+1 < &string_buf[MAX_STR_CONST-1]);
@@ -65,6 +69,7 @@ bool len_check(){
 
 %x COMMENT STRING INVALID_STR
 
+/* composite notations */
 DARROW          =>
 ASSIGN          <-
 LE              <=
@@ -76,6 +81,7 @@ INTEGER        [0-9]+
 
 IDENTIFIRE    [a-zA-Z][a-zA-Z0-9_]*
 
+/* Type and object identifier */
 TYPEID	    [A-Z]([A-Za-z_0-9])*
 OBJECTID    [a-z]([A-Za-z_0-9])*
 
@@ -85,13 +91,15 @@ BEGIN_COMMENT		\(\*
 END_COMMENT		\*\)
 LINE_COMMENT		--.*
 
+
+
 NEW_LINE		\n
 
 
 
 /* STRINGS */
 QUOTE			\"
-NULL_CHARACTERS		\0
+NULL_CHARACTERS		\\0
 
 /* KEYWORDS*/
 CLASS		(?i:class)
@@ -110,6 +118,8 @@ NEW		(?i:new)
 OF		(?i:of)
 NOT		(?i:not)
 
+
+/* True or False with always lower case first letter*/
 FALSE		f(?i:alse)
 TRUE		t(?i:rue)
 
@@ -121,31 +131,40 @@ TRUE		t(?i:rue)
   *  comments
   */
 
+ /* rule to increment line on newline */
 
 {NEW_LINE}  {curr_lineno++;}
 
+ /* ignore comment strings */
 {LINE_COMMENT}	{}
 
+ /* on multiline comment begin start state COMMENT and increment depth */
 {BEGIN_COMMENT}	{
     BEGIN(COMMENT);
     comment_depth++;
 }		
 
+ /* Check for unmatched closing comment */
 {END_COMMENT} {
     cool_yylval.error_msg = "Unmatched *)";
     return ERROR;
 }
 
+
+ /* When in COMMENT state */
 <COMMENT>{
 
+    /* Increment comment_depth on new comment open */
     {BEGIN_COMMENT}	{
 			    ++comment_depth;
 			}
+    /* Decrement comment depth on close and exit COMMENT state on depth==0*/
     {END_COMMENT}   {
 		       if(--comment_depth==0)
 			       BEGIN(INITIAL);
 		   }
 
+    /* Error when EOF in comment */
     <<EOF>> {
 	BEGIN(INITIAL);
 	cool_yylval.error_msg = "EOF in comment";
@@ -153,8 +172,10 @@ TRUE		t(?i:rue)
     }
 
 
+    /* increment on new line */
     {NEW_LINE}  {curr_lineno++;}
 
+    /* reject all other characters inside comment  */
     . {}
 
 }
@@ -168,13 +189,20 @@ TRUE		t(?i:rue)
   *
   */
 
+ /*Check string begin with ". If so assign pointer ro string buffer and start
+ * STING state*/
+
 {QUOTE} {
 	    string_buf_ptr = string_buf;
 	    BEGIN(STRING);
 	}
 
 
+
 <STRING>{
+    /* Check for closing " if so append endofline and create entry on string
+     * table */
+
 	{QUOTE} {
 		    *string_buf_ptr++ = '\0';
 		    BEGIN(INITIAL);
@@ -182,24 +210,32 @@ TRUE		t(?i:rue)
 		    return STR_CONST;
 		}
 
-	{NULL_CHARACTERS} {
-					cool_yylval.error_msg = "String contains null character";
-    					return ERROR;
-				}
 
-	{NEW_LINE} {
-				curr_lineno++;
-				cool_yylval.error_msg = "Unterminated string constant";
-				BEGIN(INITIAL);
-				return ERROR;			
+	/* Error on null characters in string */
+	{NULL_CHARACTERS} {
+			cool_yylval.error_msg = "String contains null character";
+    			return ERROR;
 			}
+
+	/* increment line on new line but return ERROR */
+	{NEW_LINE} {
+			curr_lineno++;
+			cool_yylval.error_msg = "Unterminated string constant";
+			BEGIN(INITIAL);
+			return ERROR;			
+	    	}
+
+	/* return EOF in string error  */
 	<<EOF>>	{
 		   BEGIN(INITIAL);
-		   cool_yylval.error_msg = "eof in string constant";
+		   cool_yylval.error_msg = "EOF in string constant";
 		   return ERROR;
 	}
 
+	/* For the following rules before each append string length is checked
+	 * to not exceed max string length */
 
+	/* check character escape in string if so take as c and append to string */
 	\\c {
 	    if(len_check()){
 		*string_buf_ptr++ = 'c';
@@ -209,6 +245,8 @@ TRUE		t(?i:rue)
 		   return ERROR;
 	    }
 	}
+	
+	/* check tab in string if so take as \t and append to string */
 	\\t {
 	    if(len_check()){
 		*string_buf_ptr++ = '\t';
@@ -218,6 +256,8 @@ TRUE		t(?i:rue)
 		   return ERROR;
 	    }
 	}
+
+	/* check backspace in string if so take as \b and append to string */
 	\\b {
 	    if(len_check()){
 		*string_buf_ptr++ = '\b';
@@ -227,6 +267,8 @@ TRUE		t(?i:rue)
 		   return ERROR;
 	    }
 	}
+
+	/* check newline in string if so take as \n and append to string */
 	\\n {
 	    if(len_check()){
 		*string_buf_ptr++ = '\n';
@@ -236,6 +278,8 @@ TRUE		t(?i:rue)
 		   return ERROR;
 	    }
 	}
+
+	/* For all other characters append directly to string */
 	. {
 	    if(len_check()){
 		*string_buf_ptr++ = yytext[0];
@@ -314,8 +358,7 @@ TRUE		t(?i:rue)
   */
 
 {INTEGER}   {
-		cool_yylval.symbol = inttable.add_string(yytext); /* new IntEntry(yytext,
-								  MAX_STR_CONST, int_ct++); */
+		cool_yylval.symbol = inttable.add_string(yytext);
 		return (INT_CONST);
 	    }
 
