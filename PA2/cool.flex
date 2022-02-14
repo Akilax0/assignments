@@ -308,6 +308,19 @@ TRUE		t(?i:rue)
 	    }
 	}
 
+	/* For all other escaped characters append character to string */
+	\\. {
+	
+	    if(len_check()){
+		*string_buf_ptr++ = yytext[1];
+	    }else{
+		   BEGIN(INITIAL);
+		   cool_yylval.error_msg = "string too long";
+		   return ERROR;
+	    }
+	
+	}
+
 	/* For all other characters append directly to string */
 	. {
 	    if(len_check()){
@@ -413,13 +426,15 @@ TRUE		t(?i:rue)
 
  /* Whitespaces & other extras  */
 
-
+ /* Handle multiple newlines */
 \n+ {
    curr_lineno += yyleng;
 }
 
+ /* remove whitespaces  */ 
 [\t\r\f\v ]+ ;
 
+/* Give error for non token elements in code */
 . {
     cool_yylval.error_msg = yytext;
     return ERROR;

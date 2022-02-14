@@ -313,3 +313,19 @@ yymore() -> if scanner matches another rule appends ytext to next token
 yyless(n) -> skips first n characters of yytext
 unput(c) -> put c in input file and remove yytext
 input() -> reads next character from input
+
+
+
+TESTING
+===============
+
+Main tests done using provided example codes 
+
+arith.cl -> corrected implementation of if and while keywords
+atoi.cl  -> Same error as coolc "Class Main is not defined"
+lam.cl -> error when escaped characters in strings 
+    i.e -> \" \? 
+
+rest of the files had no errors.
+
+
