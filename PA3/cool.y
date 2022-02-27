@@ -133,12 +133,27 @@
     %type <program> program
     %type <classes> class_list
     %type <class_> class
+
+    
     
     /* You will want to change the following line. */
-    %type <features> dummy_feature_list
+    /* %type <features> dummy_feature_list */
     
     /* Precedence declarations go here. */
+    /* Declarations from COOL manual */
+    /* Section 11.1 Precedence */
+    /* Section 5.35 Bison*/
+    k
     
+    %right  ASSIGN
+    %left   NOT
+    %nonassoc LE '<' '='
+    %left   '+' '-'
+    %left   '*' '/'
+    %left   ISVOID
+    %left   '~'
+    %left   '@'
+    %left   '.'
     
     %%
     /* 

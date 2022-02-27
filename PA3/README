@@ -130,3 +130,36 @@ Instructions
 
 Write-up for PA3
 ----------------
+
+
+
+Precedence Decalarations
+-------------------------
+
+Precedence of binary and unary operations are declared here.
+Precedence for COOL is given in cool-manual.pdf(section 11.1) where the order 
+from highest to lowest given as,
+
+       .
+       @
+       ~
+       isvoid
+       * /
+       + -
+       <= < = 
+       not
+       <-
+
+It is also given that all binary operations are left associative except
+assignment which is right assiciative. And the three comparisons are not
+associative.
+
+Referring the BISON manual (section 5.3),
+	  The precedence statements should be prefixed with %left %right
+	  %nonassoc
+
+
+	  The statement are declared in order of lowest to highest gor BISON
+(5.3.2)
+
+
