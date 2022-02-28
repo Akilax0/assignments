@@ -211,11 +211,11 @@
     ;
 
     features
-    : feature ';'
+    : feature
     {
 	$$ = single_Features($1);
     }
-    | features feature ';'
+    | features feature 
     {
 	$$ = append_Features($1,single_Features($2));	
     }
@@ -237,6 +237,32 @@
 	$$ = attr($1,$3,$5);
     }
     ;
+
+    
+    /* Formals -> parameters for methods */
+    /* formals can be defined for single multiple and non*/
+    formals 
+    : formal 
+    {
+	$$ = single_Formals($1);
+    }
+    | formal ',' formal
+    {
+	$$ = append_Formals($1, single_Formals($2));	
+    }
+    | { $$ = nil_Formals();}
+    ;
+
+    
+    /* formal rule  */
+    formal 
+    : OBJECTID ':' TYPEID 
+    {
+	$$ = formal($1,$3);	
+    }
+
+
+
 
 
 /* Feature list may be empty, but no empty features in list. */
