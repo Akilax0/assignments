@@ -135,14 +135,15 @@
     %type <class_> class
 
     %type <features> feature_list
+    %type <features> features
     %type <feature> feature
+
     %type <formals> formal_list
     %type <formal> formal
-    %type <expression> exp
-    %type <expressions> exp_block
+    %type <expression> expr
+    %type <expressions> expr_block
     %type <cases> case_branches
-    %type <case> case_branch
-    
+    %type <case_> case_branch
     
     /* You will want to change the following line. */
     /* %type <features> dummy_feature_list */
@@ -151,7 +152,6 @@
     /* Declarations from COOL manual */
     /* Section 11.1 Precedence */
     /* Section 5.35 Bison*/
-    
     
     %right  ASSIGN
     %left   NOT
@@ -201,14 +201,45 @@
     }
     ;
    
-
+    /* Feature list can be empty itself but cannot have empty Features */
     feature_list
-    :features
+    : features
     {
-	$$ = nil_Features(); 
+	$$ = $1; 
+    }
+    | {$$ = nil_Features();}
+    ;
+
+    features
+    : feature ';'
+    {
+	$$ = single_Features($1);
+    }
+    | features feature ';'
+    {
+	$$ = append_Features($1,single_Features($2));	
+    }
+    | error ';'
+    ;
+
+    /* Features -> methods and attributes in a class*/
+    feature
+    : OBJECTID '(' formals ')' ':' TYPEID '{' expr  '}' ';' 
+    {
+	$$ = method($1,$3,$6,$8);	
+    }
+    | OBJECTID ':' TYPEID ';'
+    {
+	$$ = attr($1,$3,no_expr());	
+    }
+    | OBJECTID ':' TYPEID ASSIGN expr ';'
+    {
+	$$ = attr($1,$3,$5);
     }
     ;
-    /* Feature list may be empty, but no empty features in list. */
+
+
+/* Feature list may be empty, but no empty features in list. */
     /* dummy_feature_list:	*/	/* empty */
    /* {  $$ = nil_Features(); } */
     
