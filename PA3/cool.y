@@ -140,8 +140,11 @@
 
     %type <formals> formal_list
     %type <formal> formal
+
     %type <expression> expr
+    %type <expressions> expr_param
     %type <expressions> expr_block
+    
     %type <cases> case_branches
     %type <case_> case_branch
     
@@ -241,7 +244,7 @@
     
     /* Formals -> parameters for methods */
     /* formals can be defined for single multiple and non*/
-    formals 
+    formal_list 
     : formal 
     {
 	$$ = single_Formals($1);
@@ -263,13 +266,89 @@
 
 
 
+    /* expr -> body of the program  referring cool-manual*/
+    expr
+    /* Assignment */
+    | OBJECTID ASSIGN expr
+    {
+	$$ = assign($1,$3);
+    }
+    /* Simplest expressions constants */
+    | BOOL_CONST
+    {
+	$$ = bool_const($1);
+    }
+    | INT_CONST 
+    {
+	$$ = int_const($1);    
+    }
+    | STR_CONST
+    {
+	$$ = string_const($1);
+    }
+    /* Dispath (Method Call)  */ 
+    | expr '.' TYPEID '(' expr_param  ')'
+    {
+	$$ = dispatch($1,$3,$5);
+    }
+    | OBJECTID '(' expr_param  ')'
+    {
+	$$ = dispatch(object(idtable.add_string("self")),$1,$3);
+    }
+    | expr '@' TYPEID '.' OBJECTID '(' expr_param ')'
+    {
+	$$ = static_dispatch($1,$3,$5,$7);
+    }
+    /* Conditionals */
+    | IF expr THEN expr ELSE expr FI
+    {
+	$$ = cond($2,$4,$6);
+    }
+    /* Loops */
+    | WHILE expr LOOP expr POOL
+    {
+	$$ = loop($2,$4);
+    }
+    | '{' expr_block '}'
+    {
+	$$ = block($2);
+    }
+    ;
 
 
-/* Feature list may be empty, but no empty features in list. */
-    /* dummy_feature_list:	*/	/* empty */
-   /* {  $$ = nil_Features(); } */
-    
-    
+
+
+    /* Parameters for dispatch */
+    expr_param 
+    : expr
+    {
+	$$ = single_Expressions($1);
+    }
+    | expr_param ',' expr 
+    {
+	$$ = append_Expressions($1, single_Expressions($3));
+    }
+    | { nil_Expressions();}
+    ;
+
+    expr_block
+    : expr ';'
+    {
+	$$ = single_Expressions($1);
+    }
+    | expr_block expr ';'
+    {
+	$$ = append_Expressions($1,single_Expressions($2));
+    }
+    | error ';' 
+    { 
+	yyclearin;
+	$$ = NULL;
+    }
+    ;
+
+
+
     /* end of grammar */
     %%
     
