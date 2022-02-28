@@ -144,6 +144,7 @@
     %type <expression> expr
     %type <expressions> expr_param
     %type <expressions> expr_block
+    %type <expressions> expr_let
     
     %type <cases> case_branches
     %type <case_> case_branch
@@ -268,6 +269,10 @@
 
     /* expr -> body of the program  referring cool-manual*/
     expr
+    : OBJECTID
+    {
+	$$ = object($1);
+    }
     /* Assignment */
     | OBJECTID ASSIGN expr
     {
@@ -313,6 +318,68 @@
     {
 	$$ = block($2);
     }
+    /* Let expressions  */
+    | LET expr_let
+    {
+	$$ = $2;
+    }
+    /* Case expressions */
+    | CASE expr OF case_branches ESAC
+    {
+	$$ = typcase($2,$4); 
+    }
+    /* New  */
+    | NEW TYPEID
+    {
+	$$ = new_($2);
+    }
+    /* Isvoid  */
+    | ISVOID expr
+    {
+	$$ = isvoid($2);
+    }
+    /* operators  */
+    | expr '+' expr
+    {
+	$$ = plus($1,$3);
+    }
+    | expr '-' expr
+    {
+	$$ = sub($1,$3);
+    }
+    | expr '*' expr
+    {
+	$$ = mul($1,$3);
+    }
+    | expr '/' expr
+    {
+	$$ = divide($1,$3);
+    }
+    | expr '<' expr
+    {
+	$$ = lt($1,$3);
+    }
+    | expr LE expr
+    {
+	$$ = leq($1,$3);
+    }
+    | expr '=' expr
+    {
+	$$ = eq($1,$3);
+    }
+    | '~' expr 
+    {
+	$$ = neg($2);
+    }
+    | NOT expr
+    {
+	$$ = comp($2);
+    }
+    /* Expression in paranthesis */
+    | '(' expr ')'
+    {
+	$$ = $2;
+    }
     ;
 
 
@@ -331,6 +398,7 @@
     | { nil_Expressions();}
     ;
 
+    /* Expresssion Blocks  */
     expr_block
     : expr ';'
     {
@@ -344,6 +412,56 @@
     { 
 	yyclearin;
 	$$ = NULL;
+    }
+    ;
+
+
+    /* LET expressions  */
+    expr_let
+    : OBJECTID ':' TYPEID IN expr 
+    {
+	$$ = let($1,$3,no_expr(),$5);
+    }
+    | OBJECTID ':' TYPEID ASSIGN expr IN expr
+    {
+	$$ = let($1,$3,$5,$7);
+    }
+    | OBJECTID ':' TYPEID ',' expr_let 
+    {
+	$$ = let($1,$3,no_expr(),$5);
+    }
+    | OBJECTID ':' TYPEID ASSIGN expr ',' expr_let 
+    {
+	$$ = let($1,$3,$5,$7);
+    }
+    | error IN expr 
+    {
+	yyclearin;
+	$$ = NULL;
+    }
+    | error ',' expr_let
+    {
+	yyclearin;
+	$$ = NULL;
+    }
+    ;
+    
+
+    case_branches
+    : case_branch
+    {
+	$$ = single_Cases($1);
+    }
+    | case_branches case_branch
+    {
+	$$ = append_Cases($1,single_Cases($2));
+    }
+    ;
+
+    case_branch
+    : OBJECTID ':' TYPEID DARROW expr ';'
+    {
+	$$ = branch($1,$3,$5);
     }
     ;
 
