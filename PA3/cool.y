@@ -323,10 +323,10 @@
 	$$ = block($2);
     }
     /* Let expressions  */
-    | LET expr_let
+    /*| LET expr_let
     {
 	$$ = $2;
-    }
+    }*/
     /* Case expressions */
     | CASE expr OF case_branches ESAC
     {
@@ -422,31 +422,10 @@
 
     /* LET expressions  */
     expr_let
-    : OBJECTID ':' TYPEID IN expr 
+    : LET error IN expr
+    | LET OBJECTID ':' TYPEID ASSIGN expr IN expr %prec LET 
     {
-	$$ = let($1,$3,no_expr(),$5);
-    }
-    | OBJECTID ':' TYPEID ASSIGN expr IN expr
-    {
-	$$ = let($1,$3,$5, $7);
-    }
-    | OBJECTID ':' TYPEID ',' expr_let
-    {
-	$$ = let($1,$3,no_expr(), $5);
-    }
-    | OBJECTID ':' TYPEID ASSIGN expr ',' expr_let
-    {
-	$$ = let($1,$3,$5, $7);
-    }
-    | error IN expr 
-    {
-	yyclearin;
-	$$ = NULL;
-    }
-    | error ',' expr_let
-    {
-	yyclearin;
-	$$ = NULL;
+	$$ = let($2,$4,$6,$8);
     }
     ;
     
