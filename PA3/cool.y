@@ -224,15 +224,11 @@
 	$$ = append_Features($1,single_Features($2));	
     }
     | error ';'
-    {
-	yyclearin;
-	$$ = NULL;
-    }
     ;
 
     /* Features -> methods and attributes in a class*/
     feature
-    : OBJECTID '(' formal_list ')' ':' TYPEID '{' expr  '}' ';' 
+    : OBJECTID '(' formals ')' ':' TYPEID '{' expr  '}' ';' 
     {
 	$$ = method($1,$3,$6,$8);	
     }
@@ -254,9 +250,9 @@
     {
 	$$ = single_Formals($1);
     }
-    | formal_list ',' formal
+    | formal ',' formal
     {
-	$$ = append_Formals($1, single_Formals($3));	
+	$$ = append_Formals($1, single_Formals($2));	
     }
     | { $$ = nil_Formals();}
     ;
@@ -422,21 +418,21 @@
 
     /* LET expressions  */
     expr_let
-    : OBJECTID ':' TYPEID 
+    : OBJECTID ':' TYPEID IN expr 
     {
-	$$ = let($1,$3,no_expr(), no_expr());
+	$$ = let($1,$3,no_expr(),$5);
     }
     | OBJECTID ':' TYPEID ASSIGN expr IN expr
     {
-	$$ = let($1,$3,$5, $7);
+	$$ = let($1,$3,$5,$7);
     }
-    | OBJECTID ':' TYPEID ',' expr_let IN expr
+    | OBJECTID ':' TYPEID ',' expr_let 
     {
-	$$ = let($1,$3,no_expr(), $7);
+	$$ = let($1,$3,no_expr(),$5);
     }
-    | OBJECTID ':' TYPEID ASSIGN expr ',' expr_let
+    | OBJECTID ':' TYPEID ASSIGN expr ',' expr_let 
     {
-	$$ = let($1,$3,$5, no_expr());
+	$$ = let($1,$3,$5,$7);
     }
     | error IN expr 
     {
