@@ -195,11 +195,11 @@
     
     /* If no parent is specified, the class inherits from the Object class. */
     class	
-    : CLASS OBJECTID '{' feature_list '}' ';'
+    : CLASS TYPEID '{' feature_list '}' ';'
     {
 	$$ = class_($2,idtable.add_string("Object"),$4,stringtable.add_string(curr_filename)); 
     }
-    | CLASS OBJECTID INHERITS TYPEID '{' feature_list '}' ';'
+    | CLASS TYPEID INHERITS TYPEID '{' feature_list '}' ';'
     { 
 	$$ = class_($2,$4,$6,stringtable.add_string(curr_filename)); 
     }
@@ -422,21 +422,21 @@
 
     /* LET expressions  */
     expr_let
-    : OBJECTID ':' TYPEID 
+    : OBJECTID ':' TYPEID IN expr 
     {
-	$$ = let($1,$3,no_expr(), no_expr());
+	$$ = let($1,$3,no_expr(),$5);
     }
     | OBJECTID ':' TYPEID ASSIGN expr IN expr
     {
 	$$ = let($1,$3,$5, $7);
     }
-    | OBJECTID ':' TYPEID ',' expr_let IN expr
+    | OBJECTID ':' TYPEID ',' expr_let
     {
-	$$ = let($1,$3,no_expr(), $7);
+	$$ = let($1,$3,no_expr(), $5);
     }
     | OBJECTID ':' TYPEID ASSIGN expr ',' expr_let
     {
-	$$ = let($1,$3,$5, no_expr());
+	$$ = let($1,$3,$5, $7);
     }
     | error IN expr 
     {
