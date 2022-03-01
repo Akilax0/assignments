@@ -144,7 +144,7 @@
     %type <expression> expr
     %type <expressions> expr_param
     %type <expressions> expr_block
-    %type <expressions> expr_let
+    %type <expression> expr_let
     
     %type <cases> case_branches
     %type <case_> case_branch
