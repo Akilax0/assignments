@@ -195,9 +195,18 @@
     
     /* If no parent is specified, the class inherits from the Object class. */
     class	
-    : CLASS TYPEID '{' feature_list '}' ';'
+    : CLASS error '{' '}' ';'
+    | CLASS TYPEID '{''}'';'
+    {
+	$$ = class_($2,idtable.add_string("Object"),nil_Features(),stringtable.add_string(curr_filename));
+    }
+    | CLASS TYPEID '{' feature_list '}' ';'
     {
 	$$ = class_($2,idtable.add_string("Object"),$4,stringtable.add_string(curr_filename)); 
+    }
+    | CLASS TYPEID INHERITS TYPEID '{' '}' ';'
+    {
+	$$ = class_($2,$4,nil_Features(),stringtable.add_string(curr_filename));
     }
     | CLASS TYPEID INHERITS TYPEID '{' feature_list '}' ';'
     { 
@@ -207,32 +216,20 @@
    
     /* Feature list can be empty itself but cannot have empty Features */
     feature_list
-    : features
-    {
-	$$ = $1; 
-    }
-    | {$$ = nil_Features();}
-    ;
-
-    features
     : feature
     {
 	$$ = single_Features($1);
     }
-    | features feature 
+    | feature_list feature 
     {
 	$$ = append_Features($1,single_Features($2));	
-    }
-    | error ';'
-    {
-	yyclearin;
-	$$ = NULL;
     }
     ;
 
     /* Features -> methods and attributes in a class*/
     feature
-    : OBJECTID '(' formal_list ')' ':' TYPEID '{' expr  '}' ';' 
+    : error ';'
+    | OBJECTID '(' formal_list ')' ':' TYPEID '{' expr  '}' ';' 
     {
 	$$ = method($1,$3,$6,$8);	
     }
@@ -309,6 +306,10 @@
 	$$ = static_dispatch($1,$3,$5,$7);
     }
     /* Conditionals */
+    | IF expr THEN expr FI
+    {
+	$$ = cond($2, $4, no_expr());
+    }
     | IF expr THEN expr ELSE expr FI
     {
 	$$ = cond($2,$4,$6);
@@ -323,10 +324,10 @@
 	$$ = block($2);
     }
     /* Let expressions  */
-    /*| LET expr_let
+    | expr_let
     {
-	$$ = $2;
-    }*/
+	$$ = $1;
+    }
     /* Case expressions */
     | CASE expr OF case_branches ESAC
     {
@@ -422,8 +423,7 @@
 
     /* LET expressions  */
     expr_let
-    : LET error IN expr
-    | LET OBJECTID ':' TYPEID ASSIGN expr IN expr %prec LET 
+    : LET OBJECTID ':' TYPEID ASSIGN expr IN expr %prec LET 
     {
 	$$ = let($2,$4,$6,$8);
     }
