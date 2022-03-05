@@ -135,7 +135,6 @@
     %type <class_> class
 
     %type <features> feature_list
-    %type <features> features
     %type <feature> feature
 
     %type <formals> formal_list
@@ -195,8 +194,7 @@
     
     /* If no parent is specified, the class inherits from the Object class. */
     class	
-    : CLASS error '{' '}' ';'
-    | CLASS TYPEID '{''}'';'
+    : CLASS TYPEID '{''}'';'
     {
 	$$ = class_($2,idtable.add_string("Object"),nil_Features(),stringtable.add_string(curr_filename));
     }
@@ -228,8 +226,7 @@
 
     /* Features -> methods and attributes in a class*/
     feature
-    : error ';'
-    | OBJECTID '(' formal_list ')' ':' TYPEID '{' expr  '}' ';' 
+    : OBJECTID '(' formal_list ')' ':' TYPEID '{' expr  '}' ';' 
     {
 	$$ = method($1,$3,$6,$8);	
     }
@@ -324,9 +321,13 @@
 	$$ = block($2);
     }
     /* Let expressions  */
-    | expr_let
+    | LET OBJECTID ':' TYPEID expr_let
     {
-	$$ = $1;
+	$$ = let($2,$4,no_expr(),$5);
+    }
+    | LET OBJECTID ':' TYPEID ASSIGN expr expr_let
+    {
+	$$ = let($2,$4,$6,$7);
     }
     /* Case expressions */
     | CASE expr OF case_branches ESAC
@@ -423,9 +424,17 @@
 
     /* LET expressions  */
     expr_let
-    : LET OBJECTID ':' TYPEID ASSIGN expr IN expr %prec LET 
+    : IN expr
     {
-	$$ = let($2,$4,$6,$8);
+	$$=$2;
+    }
+    | ',' OBJECTID ':' TYPEID expr_let
+    {
+	$$ = let($2,$4,no_expr(),$5);
+    }
+    | ',' OBJECTID ':' TYPEID ASSIGN expr expr_let 
+    {
+	$$ = let($2,$4,$6,$7);
     }
     ;
     
