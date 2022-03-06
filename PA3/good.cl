@@ -1,8 +1,10 @@
-class A {
-ana(): Int {
-x <- 4;
-};
-};
 
-Class BB__ inherits A {
+class Main inherits IO{
+
+   var : Int <- 0;
+   rar : Int <- 0;
+
+   main() : SELF_TYPE { 
+	
+	};
 };
