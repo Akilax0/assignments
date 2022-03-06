@@ -327,5 +327,8 @@ expr
 		returning the middle expression.
 
 	-LET
-
+		LET OBJECTID : TYPEID, OBJECTID : TYPEID, ... IN expr
+		LET OBJECTID : TYPEID ASSIGN expr, OBJECTID : TYPEID ASSIGN expr, ... IN expr
+			is handled by calling the let() method.
+			And the expression can have above two mentioned forms.
 
