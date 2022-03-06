@@ -150,8 +150,10 @@ Declared by us
 %type<feature> feature
 %type<formals> formal_list
 %type<formal> formal
+%type<expressions> exp_let
+%type<expressions> expr_param
 %type<expressions> exp_block
-%type<expression> exp
+%type<expression> expr
 %type<cases> case_branches
 %type<case> case_branch
 
@@ -188,6 +190,142 @@ Referring the BISON manual (section 5.3),
 Grammar
 --------
 
+Grammar starts with a definition of program as a class_list. 
 
+class_list ->
+	if class take as single class
+
+	if class_list class pass to append_Classes()
+
+class -> 
+	- CLASS TYPEID '{' '}' ';'
+		pass to class_ when 
+	- CLASS TYPEID '{' feature_list '}' ';'
+
+	- CLASS TYPEID INHERITS TYPEID '{' '}' ';'
+
+	- CLASS TYPEID INHERITS TYPEID '{' feature_list '}' ';'
+
+
+feature_list
+	Feature list can be empty itself but cannot have empty features.
+
+feature
+	Methods and attribute in class. Can have a variety of ways to define
+	them,
+
+	The attributes can have an initailization value or just the definition.
+
+	OBJECTID ':' TYPEID ';'
+		calls attr() without the initailization expression/value.
+
+	OBJECTID ':' TYPEID ASSIGN expr ';'
+		calls attr() with the initailization expression/value.
+
+	The methods can be defined with or without formal lists. However empty 
+	formals are taken care of when calling for them hence can use 
+		
+	OBJECTID '(' formal_list ')' ':' TYPEID '{' expr '}' ';'
+		and callin method()
+
+formals
+	Parameters for methods
+	Usual way of defining is 
+		OBJECTID ':' TYPEID 
+	can pass this by calling formal()
+
+expr 
+	Expressions that contain in the body of the program by referring 
+	cool-manual.
+
+	- OBJECTID 
+		returns the a call to object() to return it as it is
+	
+	- OBJECTID ASSIGN expr
+		returns a call to assign() with Symbol and expr parameters
+
+	- BOOL_CONST
+		handles boolean consts in expression with bool_const() call
+	
+	- INT_CONST
+		handles int consts in expression with int_const() call
+
+	- STR_CONST 
+		handles string const in expression with string_const() call
+
+	- Dispath or method calls are of three variants
+		1) expr '.' TYPEID '(' expr_param ')' 
+			here we call the dispatch() method. Most commonly used 
+		method call. The evaluation happens by considering the 
+		expressions in the expr_param left to right then the expr found
+		outside  along with the function call.
+
+		2) OBJECTID '(' expr_param ')' 
+			calls the dispatch() method but reffering to the self 
+		object. Also can be considered as a shorthand for 
+			self.<id>(expr,expr..)
+
+		3) expr '@' TYPEID '.' OBJECTID '(' expr_param ')'
+			calls the static_dispatch() method. A way to access 
+		methods from the parent classes. Here the method is called upon
+		the expr on the right side of '@' by giving the class name
+		(TYPEID) followed by a '.' and the method name(OBJECTID)
+	
+	- Conditionals 
+		1) IF expr THEN expr FI
+			calls the cond() method but without an expression for 
+		the else case
+
+		2) IF expr THEN expr ELSE expr FI
+			call the cond() method with the expression for the else
+		case. (A complete if else block)
+
+	- Loops 
+		1) WHILE expr LOOP expr POOL
+			All while the first expression is true execute the 
+		second expression. Calls the loop() method.
+
+	- expression block
+
+		Expression blocks are list of expressions sepereated by ';' 
+		and put inside '{' '}' when using in COOL language.
+
+	- case expressions
+		Used to have handle different options according to a given 
+		expression. typecase() method is called passing in the 
+		selection expression and the case_branches which are defined as
+
+		OBJECTID ':' TYPEID DARROW expr ';'
+			and calls method branch().
+
+	- New
+		Defining a new class object is handled here by calling new_()
+		and passing in the TYPEID. The expression takes the form of,
+			NEW TYPEID
+
+
+	- Isvoid
+		Evaluates an expression to return a boolean. Handled by calling
+		the isvoid() method on an expression as,
+			ISVOID expr
+
+	- Operators
+		THe usual operators are encountered in the COOL language as 
+			expr <op> expr
+
+		for each operator relavant method is called.
+		The operators handled here are,
+
+		+ - / * < LE = ~ 
+
+	- NOT 
+		the NOT expr is handled by calling the comp() method.
+		Basically looks for when expression is not occuring
+
+	- paranthesis
+		Expressions inside paranthesis are handled by extracting and
+		returning the middle expression.
+
+	-LET
 
 
