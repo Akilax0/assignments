@@ -248,6 +248,7 @@ expr
 		returns the a call to object() to return it as it is
 	
 	- OBJECTID ASSIGN expr
+		The assignment of an expression to a variable(OBEJCTID)
 		returns a call to assign() with Symbol and expr parameters
 
 	- BOOL_CONST
@@ -322,7 +323,15 @@ expr
 		for each operator relavant method is called.
 		The operators handled here are,
 
-		+ - / * < LE = ~ 
+		+ - / * < LE = ~
+
+		The arithmetic and the comparison operators take the form of 
+			expr<op> expr
+
+		but the negation
+			~ expr
+
+
 
 	- NOT 
 		the NOT expr is handled by calling the comp() method.
