@@ -165,6 +165,7 @@
     %left   '~'
     %left   '@'
     %left   '.'
+    %left   HIGHEST
     
     %%
 
@@ -424,7 +425,7 @@
 
     /* LET expressions  */
     expr_let
-    : IN expr
+    : IN expr %prec HIGHEST
     {
 	$$=$2;
     }
