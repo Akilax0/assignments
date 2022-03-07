@@ -131,6 +131,12 @@ Instructions
 Write-up for PA3
 ----------------
 
+by 
+
+E/17/072 Dinuransika
+E/17/154 Akilax0
+
+
 Non-terminals
 --------------
 
@@ -347,5 +353,12 @@ The dispatch issue however occured while trying to call methods of inherited cla
 	2) The parser cannot handle classes defined in the file as there is no type checking implemented yet. This will be enabled after the implementation of semantic analyzer.
 
 After the initial realizations we continued to test through individual implementations of rules. Mostly manually editing the good.cl file and also using already impelented classes , methods, assignments, operations available in the example files. The checks were done by looking at the parser outputs and going through the recognized parser 
+
+
+Another issue we encountered was having shift reduce conflicts in the LET statements with the defined operators (expr <operator> expr).
+
+However this was solved by assigning a higher priority to the LET statement there by reolving the issue.
+
+
 
 
