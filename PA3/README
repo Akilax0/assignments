@@ -332,3 +332,20 @@ expr
 			is handled by calling the let() method.
 			And the expression can have above two mentioned forms.
 
+
+Testing 
+----------
+
+First tests were done using the given good.cl and bad.cl just by running 
+" make dotest " . Here we encountered issues of various expression definitions.
+-> ASSIGN , dispatch.
+
+The ASSIGN was not parsed in the first run through of the code as was fixed.
+The dispatch issue however occured while trying to call methods of inherited classes. Soon we came to the concolusions of,
+
+	1) multiple files are not meant to be parsed in the assignment
+	2) The parser cannot handle classes defined in the file as there is no type checking implemented yet. This will be enabled after the implementation of semantic analyzer.
+
+After the initial realizations we continued to test through individual implementations of rules. Mostly manually editing the good.cl file and also using already impelented classes , methods, assignments, operations available in the example files. The checks were done by looking at the parser outputs and going through the recognized parser 
+
+
