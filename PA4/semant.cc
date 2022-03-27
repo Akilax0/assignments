@@ -1,14 +1,24 @@
-
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include "semant.h"
 #include "utilities.h"
 
+#include <algorithm>
+#include<vector>
+#include<map>
 
 extern int semant_debug;
 extern char *curr_filename;
+
+
+ClassTable *class_table
+std::map<Symbol,Class_> class_map;
+
+typedef std::pair<Symbol,Symbol> method_id
+std::map<method_id,method_class *> method_env
+
+
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -86,6 +96,52 @@ static void initialize_constants(void)
 ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) {
 
     /* Fill this in */
+    install_basic_classes();
+
+    for(int i=classes->first(); classes->more(i);i=classes->next(i)){
+           Class_ cls = classes->nth(i);
+           Symbol name = cls->get_name();
+
+           if (class_map.find(name) != class_map.end()){
+                sement_error(cls) << "Class redifinition" << name << "." << std::endl;
+                return;
+           }
+
+           if (name == SELF_TYPE){
+                sement_error(cls) << "Class redifinition of basic class SELF_TYPE"<< std::endl;
+                return;
+           }
+
+        class_map.insert(std::make_pair(name,cls));
+    }
+
+
+    if (class_map.find(Main) != class_map.end()){
+        sement_error() << "Main class not defined" << name << "." << std::endl;
+        return;
+    }
+
+
+    for (int i = classes->first();classes->more(i);i=classes->next(i)){
+        Class_ cls = classes->nth(i);
+        Symbol startingClass = cls-> get_name();
+
+        for (Symbol parent = cls->gt_parent();parent != Object; cls = class_map[parent], parent = cls->get_parent()){
+            if(class_map.find(parent) == class_map.end()){
+                semant_error(cls) << "Parent class " << parent << "undefined." << std::endl;
+                return;
+            }
+
+            if(parent == Int || parent == Bool || parent == Str || parent == SELF_TYPE){
+                semant_error(cls) << "Classes can not inherit from basic classes" << parent << std::endl;
+                return;
+            }
+            if(parent == starting_class){
+                semant_error(cls) << "Inheritance cycle encountered"  << std::endl;
+                return;
+            }
+        }
+    }
 
 }
 
@@ -188,7 +244,18 @@ void ClassTable::install_basic_classes() {
 						      Str, 
 						      no_expr()))),
 	       filename);
+
+    class_map.insert(std::make_pair(Object, Object_Class));
+    class_map.insert(std::make_pair(IO,IO_Class));
+    class_map.insert(std::make_pair(Int,Int_Class));
+    class_map.insert(std::make_pair(Bool,Bool_Class));
+    class_map.insert(std::make_pair(Str,Str_Class));
 }
+
+
+
+
+
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -222,7 +289,57 @@ ostream& ClassTable::semant_error()
     return error_stream;
 } 
 
+/////////////////////////////////////////////////////////////////////////////
 
+/*
+ * The method returns pointer to method with same name, if no method defined for the given class
+ *
+ * will not check for the siperclasses of the provided class
+ *
+ * */
+
+
+method_class *method_in_cls(Symbol class_name, Symbol method_name){
+    auto iter = method_env.find(std::make_pair(class_name, method_name));
+    if(iter == method_env.end()){
+        return nullptr;
+    }
+
+    return iter-> second;
+}
+
+
+
+/*
+ *
+ * Get interface of global method environment
+ *
+ * returns result of M(C,f).
+ * */
+
+method_class *lookup_method(Symbol class_name, Symbol method_name){
+    for(auto c_iter = class_map.find(class_name);
+        c_iter != class_map.end();
+        c_iter = class_map.find(c_iter->second->get_parent())){
+    
+        method_class *method = method_in_cls(c_iter -> second -> get_name(),method_name);
+        if(method){
+            return method
+        }
+    }
+
+    return nullptr;
+}
+
+
+bool cls_is_defined(Symbol cls_name){
+    //
+
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////
 
 /*   This is the entry point to the semantic checker.
 
