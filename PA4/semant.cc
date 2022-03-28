@@ -5,8 +5,8 @@
 #include "utilities.h"
 
 #include <algorithm>
-#include<vector>
-#include<map>
+#include <vector>
+#include <map>
 
 extern int semant_debug;
 extern char *curr_filename;
@@ -333,11 +333,126 @@ method_class *lookup_method(Symbol class_name, Symbol method_name){
 
 
 bool cls_is_defined(Symbol cls_name){
-    //
+    if(cls_name == SELF_TYPE){
+	return true;
+    }
 
+    if (class_map.find(cls_name) == class_map.end()){
+	return false;
+    }
+
+    return true;
 }
 
 
+/*
+ * Return true if sub us a subclass of a superclasss
+ *
+ * */
+
+bool is_subclass(Symbol sub, Symbol super, type_env &tenv){
+	if(sub == SELF_TYPE){
+		if(super == SELF_TYPE){
+			return true;
+		}
+
+		sub = tenv.c -> get_name();
+	}
+
+	for (auto c_iter = class_map.find(sub);
+	c_iter != class_map.end();
+	citer = class_map.find(c_iter-> second-> get_parent()){
+		if(c_iter->second->get_name() == super){
+			return true;
+		}
+	}
+
+	return false;
+}
+
+
+/*
+ *
+ * Returns first common ancestor of a and b classes
+ *
+ * */
+
+Symbol cls_join(Symbol a, Symbol b, type_env &tenv){
+	if(a==SELF_TYPE){
+		a = tenv.c->get_name();
+	}
+	if(b==SELF_TYPE){
+		b = tenv.c->get_name();
+	}
+
+	Class_ cls = class_map[a];
+
+	for (; !is_subclass(b, cls->get_name(),tenv)); 
+	cls = class_map[cls->get_parent()]{}
+
+	return cls-> get_name();
+}
+
+
+//Type Checking Methods
+
+
+Symbol method_class::typecheck(type_env &tenv){
+	tenv.o.enterscope();
+
+	tenv.o.addid(self,new Symbol(SELF_TYPE));
+
+	method_class *m = method_in_cls(tenv.c-> get_name(),name);
+
+
+	if(this !=m) {
+		classtable-> semant_error(tenv.c-> get_filename(),this)<< "Method" << name << " is multiply defined." << std::endl;
+
+	}
+
+	auto c_iter = class_map.find(tenv.c->get_parent());
+	if(c-iter != class_map.end()){
+		m = lookup_method(c_iter->second->get_name(), name);
+		// m now holds the derived version of method (if any)
+	}
+
+	bool derived_formals_are_less = false;
+
+	std::vector<Symbol> defined;
+
+	int i;
+	for(i = formals-> first(); formals-> more(i); i = formals-> next(i)){
+		Formal f  = formals->nth(i);
+		Symbol f_name = f->get_name();
+		Symbol type_decl = f-> get_type_decl();
+
+		if(f_name == self){
+			classtable-> semant_error(tenv.c->get_filename(),this)<< "'self' cannot be the name of a formal parameter." <<std::endl;
+		}
+		else{
+			if(type_decl == SELF_TYPE){
+				classtable->semant_error(tenv.c->get_filename(),this)<< "Formal parameter " << f_name << " cannot have type SELF_TYPE." <<std::endl;
+			} else if(!cls_is_defined(type_decl)){
+				classtable->semant_error(tenv.c->get_filename(),this)<< "Class " <<type_decl << "of formal parameter" << f_name << " is undefined." << std::endl;
+
+			}
+
+
+			if(std::find(defined.begin(),defined.end(),f_name) == defined.end()){
+				defined.push_back(f_name);
+			}else{
+				classtable->semant_error(tenv.c->get_filename(),this)<< "Formal parameter " << f_name << "is multiply defined. " <<std::endl;
+			}
+
+			tenv.o.addid(f->get_name(),new Symbol(type_decl));
+		}
+
+		if(m){
+			//
+		}
+
+	}
+}
 
 /////////////////////////////////////////////////////////////////////////////
 
