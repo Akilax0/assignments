@@ -1,24 +1,14 @@
+
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include "semant.h"
 #include "utilities.h"
 
-#include <algorithm>
-#include <vector>
-#include <map>
 
 extern int semant_debug;
 extern char *curr_filename;
-
-
-ClassTable *class_table
-std::map<Symbol,Class_> class_map;
-
-typedef std::pair<Symbol,Symbol> method_id
-std::map<method_id,method_class *> method_env
-
-
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -96,53 +86,90 @@ static void initialize_constants(void)
 ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) {
 
     /* Fill this in */
-    install_basic_classes();
 
-    for(int i=classes->first(); classes->more(i);i=classes->next(i)){
-           Class_ cls = classes->nth(i);
-           Symbol name = cls->get_name();
+}
 
-           if (class_map.find(name) != class_map.end()){
-                sement_error(cls) << "Class redifinition" << name << "." << std::endl;
-                return;
-           }
-
-           if (name == SELF_TYPE){
-                sement_error(cls) << "Class redifinition of basic class SELF_TYPE"<< std::endl;
-                return;
-           }
-
-        class_map.insert(std::make_pair(name,cls));
+void ClassTable::type_check_method(method_class* current_method, class__class* current_class) {
+    Expression expr = current_method->get_expression();
+    Symbol return_type = current_method->get_return_type();
+    symbol_table.enterscope();
+    Formals formals = current_method->get_formals();
+    int formals_len = formals->len();
+    for(int i = 0; i < formals_len; i++) {
+        Symbol name = (static_cast<formal_class*>(formals->nth(i)))->get_name();
+        Symbol type = (static_cast<formal_class*>(formals->nth(i)))->get_type();
+        symbol_table.addid(name, type);
     }
+    
+    type_check_expression(expr, current_class, return_type);
+    symbol_table.exitscope();
+}
 
-
-    if (class_map.find(Main) != class_map.end()){
-        sement_error() << "Main class not defined" << name << "." << std::endl;
-        return;
+Symbol ClassTable::type_check_let(let_class* let, class__class* current_class) {
+    symbol_table.enterscope();
+    Symbol type = let->get_type();
+    class__class* type_ptr = static_cast<class__class*>(classes_table.lookup(type));
+    Symbol identifier = let->get_identifier();
+    //  SELF_TYPE is allowed as a let binding
+    if (type != SELF_TYPE && type_ptr == NULL) {
+        LOG_ERROR(current_class)
+            << "Undefined type in let binding " << type << endl;
+        return Object;
     }
+    if (identifier == self) {
+        LOG_ERROR(current_class)
+            << "Trying to bind self in let binding" << endl;
+        return Object;
+    }
+    symbol_table.addid(identifier, type);
+    type_check_expression(let->get_init(), current_class, type);
+    Symbol let_type = type_check_expression(let->get_body(), current_class, Object);
+    symbol_table.exitscope();
+    return let_type;
+}
 
+Symbol ClassTable::type_check_dispatch(dispatch_class* dispatch, class__class* current_class) {
+    Symbol object_type = type_check_expression(dispatch->get_object(), current_class, Object);
+    
+    Symbol return_type = handle_dispatch(
+        dispatch->get_object(),
+        dispatch->get_name(),
+        dispatch->get_arguments(),
+        object_type,
+        current_class);
+    
+    if (return_type == SELF_TYPE) {
+        return_type = object_type;
+    }
+    return return_type;
+}
 
-    for (int i = classes->first();classes->more(i);i=classes->next(i)){
-        Class_ cls = classes->nth(i);
-        Symbol startingClass = cls-> get_name();
+void ClassTable::type_check_eq(eq_class* eq, class__class* current_class) {
+    Symbol left_type = type_check_expression(eq->get_left_operand(), current_class, Object);
+    Symbol right_type = type_check_expression(eq->get_right_operand(), current_class, Object);
+    if (invalid_comparison(left_type, right_type) || invalid_comparison(right_type, left_type)) {
+            LOG_ERROR(current_class)
+                << "Illegal comparison between " << left_type << " and " << right_type << endl;
+    }
+}
 
-        for (Symbol parent = cls->gt_parent();parent != Object; cls = class_map[parent], parent = cls->get_parent()){
-            if(class_map.find(parent) == class_map.end()){
-                semant_error(cls) << "Parent class " << parent << "undefined." << std::endl;
-                return;
-            }
-
-            if(parent == Int || parent == Bool || parent == Str || parent == SELF_TYPE){
-                semant_error(cls) << "Classes can not inherit from basic classes" << parent << std::endl;
-                return;
-            }
-            if(parent == starting_class){
-                semant_error(cls) << "Inheritance cycle encountered"  << std::endl;
-                return;
-            }
+bool ClassTable::is_descendant(Symbol desc, Symbol ancestor, class__class* current_class) {
+    if (desc == ancestor) {
+        return true;
+    }
+    if (desc == SELF_TYPE) {
+        desc = current_class->get_name();
+    }
+    class__class *current_type = static_cast<class__class*>(classes_table.lookup(desc));
+    while (current_type != NULL) {
+        if (current_type->get_name()  == ancestor) {
+            return true;
         }
+        Symbol parent_symbol = current_type->get_parent();
+        class__class *parent_type = static_cast<class__class*>(classes_table.lookup(parent_symbol));
+        current_type = parent_type;
     }
-
+    return false;
 }
 
 void ClassTable::install_basic_classes() {
@@ -244,18 +271,7 @@ void ClassTable::install_basic_classes() {
 						      Str, 
 						      no_expr()))),
 	       filename);
-
-    class_map.insert(std::make_pair(Object, Object_Class));
-    class_map.insert(std::make_pair(IO,IO_Class));
-    class_map.insert(std::make_pair(Int,Int_Class));
-    class_map.insert(std::make_pair(Bool,Bool_Class));
-    class_map.insert(std::make_pair(Str,Str_Class));
 }
-
-
-
-
-
 
 ////////////////////////////////////////////////////////////////////
 //
@@ -289,172 +305,7 @@ ostream& ClassTable::semant_error()
     return error_stream;
 } 
 
-/////////////////////////////////////////////////////////////////////////////
 
-/*
- * The method returns pointer to method with same name, if no method defined for the given class
- *
- * will not check for the siperclasses of the provided class
- *
- * */
-
-
-method_class *method_in_cls(Symbol class_name, Symbol method_name){
-    auto iter = method_env.find(std::make_pair(class_name, method_name));
-    if(iter == method_env.end()){
-        return nullptr;
-    }
-
-    return iter-> second;
-}
-
-
-
-/*
- *
- * Get interface of global method environment
- *
- * returns result of M(C,f).
- * */
-
-method_class *lookup_method(Symbol class_name, Symbol method_name){
-    for(auto c_iter = class_map.find(class_name);
-        c_iter != class_map.end();
-        c_iter = class_map.find(c_iter->second->get_parent())){
-    
-        method_class *method = method_in_cls(c_iter -> second -> get_name(),method_name);
-        if(method){
-            return method
-        }
-    }
-
-    return nullptr;
-}
-
-
-bool cls_is_defined(Symbol cls_name){
-    if(cls_name == SELF_TYPE){
-	return true;
-    }
-
-    if (class_map.find(cls_name) == class_map.end()){
-	return false;
-    }
-
-    return true;
-}
-
-
-/*
- * Return true if sub us a subclass of a superclasss
- *
- * */
-
-bool is_subclass(Symbol sub, Symbol super, type_env &tenv){
-	if(sub == SELF_TYPE){
-		if(super == SELF_TYPE){
-			return true;
-		}
-
-		sub = tenv.c -> get_name();
-	}
-
-	for (auto c_iter = class_map.find(sub);
-	c_iter != class_map.end();
-	citer = class_map.find(c_iter-> second-> get_parent()){
-		if(c_iter->second->get_name() == super){
-			return true;
-		}
-	}
-
-	return false;
-}
-
-
-/*
- *
- * Returns first common ancestor of a and b classes
- *
- * */
-
-Symbol cls_join(Symbol a, Symbol b, type_env &tenv){
-	if(a==SELF_TYPE){
-		a = tenv.c->get_name();
-	}
-	if(b==SELF_TYPE){
-		b = tenv.c->get_name();
-	}
-
-	Class_ cls = class_map[a];
-
-	for (; !is_subclass(b, cls->get_name(),tenv)); 
-	cls = class_map[cls->get_parent()]{}
-
-	return cls-> get_name();
-}
-
-
-//Type Checking Methods
-
-
-Symbol method_class::typecheck(type_env &tenv){
-	tenv.o.enterscope();
-
-	tenv.o.addid(self,new Symbol(SELF_TYPE));
-
-	method_class *m = method_in_cls(tenv.c-> get_name(),name);
-
-
-	if(this !=m) {
-		classtable-> semant_error(tenv.c-> get_filename(),this)<< "Method" << name << " is multiply defined." << std::endl;
-
-	}
-
-	auto c_iter = class_map.find(tenv.c->get_parent());
-	if(c-iter != class_map.end()){
-		m = lookup_method(c_iter->second->get_name(), name);
-		// m now holds the derived version of method (if any)
-	}
-
-	bool derived_formals_are_less = false;
-
-	std::vector<Symbol> defined;
-
-	int i;
-	for(i = formals-> first(); formals-> more(i); i = formals-> next(i)){
-		Formal f  = formals->nth(i);
-		Symbol f_name = f->get_name();
-		Symbol type_decl = f-> get_type_decl();
-
-		if(f_name == self){
-			classtable-> semant_error(tenv.c->get_filename(),this)<< "'self' cannot be the name of a formal parameter." <<std::endl;
-		}
-		else{
-			if(type_decl == SELF_TYPE){
-				classtable->semant_error(tenv.c->get_filename(),this)<< "Formal parameter " << f_name << " cannot have type SELF_TYPE." <<std::endl;
-			} else if(!cls_is_defined(type_decl)){
-				classtable->semant_error(tenv.c->get_filename(),this)<< "Class " <<type_decl << "of formal parameter" << f_name << " is undefined." << std::endl;
-
-			}
-
-
-			if(std::find(defined.begin(),defined.end(),f_name) == defined.end()){
-				defined.push_back(f_name);
-			}else{
-				classtable->semant_error(tenv.c->get_filename(),this)<< "Formal parameter " << f_name << "is multiply defined. " <<std::endl;
-			}
-
-			tenv.o.addid(f->get_name(),new Symbol(type_decl));
-		}
-
-		if(m){
-			//
-		}
-
-	}
-}
-
-/////////////////////////////////////////////////////////////////////////////
 
 /*   This is the entry point to the semantic checker.
 
