@@ -121,15 +121,15 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 
 		for(Symbol parent = cls->get_parent();parent!= Object;cls=classes_table[parent],parent = cls->get_parent()){
 			if(class_table.find(parent) == classes_table.end()){
-				semanr_error(cls) << "Parent class " << parent << " is not defined. " <<std::endl;
+				semant_error(cls) << "Parent class " << parent << " is not defined. " <<std::endl;
 				return;
 			}
 			if(parent==Int || parent == Bool || parent == Str || parent == SELF_TYPE){
-				semanr_error(cls) << "Classes cannot inherit from basic class" <<std::endl;
+				semant_error(cls) << "Classes cannot inherit from basic class" <<std::endl;
 				return;
 			}
 			if(parent == starting_class){
-				semanr_error(cls) << "An inheritance cycle has detected. " <<std::endl;
+				semant_error(cls) << "An inheritance cycle has detected. " <<std::endl;
 				return;
 			}
 		}
