@@ -220,11 +220,18 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 }
 
 void ClassTable::decl_class(class__class * current_class) {
+	//Declaring classes
+
+
+	//get features of given class	
 	Features features = current_class->get_features();
 	int features_len = features->len();
+
 	symbol_table.enterscope();
 	method_table.enterscope();
 
+	//iterate through features and declare attributes and methods for
+	//the class
 	for (int i = 0; i < features_len; i++) {
 		Feature feature = features->nth(i);
 		switch (feature->feature_type()) {
@@ -236,9 +243,12 @@ void ClassTable::decl_class(class__class * current_class) {
 				break;
 		}
 	}
+
+
 	method_tables_by_classes.emplace(current_class->get_name(), method_table);
 	symbol_tables_by_classes.emplace(current_class->get_name(), symbol_table);
 
+	//recursively declare child classes
 	for(Symbol child: current_class->children) {
 		Class__class* child_class = classes_table.lookup(child);
 		decl_class(static_cast<class__class*>(child_class));
@@ -249,17 +259,28 @@ void ClassTable::decl_class(class__class * current_class) {
 }
 
 void ClassTable::type_check_class(class__class* current_class) {
+	//type checking the classes
+
+	//get class name
 	Symbol class_name = current_class->get_name();
+
+	//check type if class name is not one of the base classes
 	bool should_type_check = class_name != Object &&
 		class_name != Int &&
 		class_name != Str &&
 		class_name != Bool &&
 		class_name != IO;
+
+	//type checking
 	if (should_type_check) {
 		Features features = current_class->get_features();
 		int features_len = features->len();
+
 		symbol_table = symbol_tables_by_classes[class_name];
 		method_table = method_tables_by_classes[class_name];
+
+		//for each feature(attribute / methods) 
+		//of given class check type
 		for (int i = 0; i < features_len; i++) {
 			Feature feature = features->nth(i);
 			switch (feature->feature_type()) {
@@ -274,6 +295,7 @@ void ClassTable::type_check_class(class__class* current_class) {
 	}
 
 	// Type check children classes
+	//recursively type check child classes
 	for(Symbol child: current_class->children) {
 		Class__class* child_class = classes_table.lookup(child);
 		type_check_class(static_cast<class__class*>(child_class));
