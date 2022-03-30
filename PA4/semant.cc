@@ -128,21 +128,25 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 	}
 
 	// Check inheritance graph
-	//
-	//
 	bool valid_inheritance = true;
 
 	for (int i = 0; i < classes_len; i++) {
-
+		
+		//get current class
 		class__class* current_class = static_cast<class__class*>(classes->nth(i));
 
 		//vector to store parent classes
 		std::vector<Symbol> parents;
 
+		//iterate through the classes until Obect class is encountered
 		while (current_class->get_name() != Object) {
+
 			parents.push_back(current_class->get_name());
 			Symbol parent_symbol = current_class->get_parent();
+
+			//lookup parent symbol 	
 			class__class* parent = static_cast<class__class*>(classes_table.lookup(parent_symbol));
+
 			if (parent == NULL)  {
 				valid_inheritance = false;
 				LOG_ERROR(current_class)
@@ -152,11 +156,14 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 				break;
 			}
 
+			//if parent symbol Not object class (inheritance from 
+			//other classes than Object and IO check)
 			if (parent_symbol == Int ||
 					parent_symbol == Str ||
 					parent_symbol == Bool ||
 					parent_symbol == SELF_TYPE) {
 				valid_inheritance = false;
+
 				LOG_ERROR(current_class)
 					<< "Class " << current_class->get_name()
 					<< " inherits from " << parent_symbol
@@ -164,7 +171,11 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 				break;
 			}
 
+			//checking for cycle
 			bool inheritance_cycle = false;
+
+			//iterate through parents vector check if 
+			//current parent already discovered
 			for (size_t j = 0; j < parents.size(); j++) {
 				if (parents[j] ==  parent_symbol) {
 					inheritance_cycle = true;
@@ -175,11 +186,14 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 				}
 			}
 
+			//If cycle exists inheritance becomes invalid.
 			if (inheritance_cycle) {
 				valid_inheritance = false;
 				break;
 			}
 
+			//if current parent symbol does not have current class
+			//as child add it.
 			if (!parent->has_child(current_class->get_name())) {
 				parent->children.push_back(current_class->get_name());
 			}
