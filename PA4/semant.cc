@@ -302,9 +302,16 @@ void ClassTable::type_check_class(class__class* current_class) {
 	}
 }
 
+
+
 void ClassTable::decl_attr(attr_class* current_attr, class__class* current_class) {
+	// Declare attribute
+
+
+	//get attribute type
 	Symbol attr_type = current_attr->get_type();
 	Class_ type = classes_table.lookup(attr_type);
+
 	// SELF_TYPE is  allowed as an attribute type
 	if (attr_type != SELF_TYPE && type == NULL) {
 		LOG_ERROR(current_class)
@@ -329,6 +336,7 @@ void ClassTable::decl_attr(attr_class* current_attr, class__class* current_class
 		return;
 	}
 
+
 	MethodDeclarations method_def = method_table.lookup(current_attr->get_name());
 
 	if (method_def != NULL) {
@@ -337,14 +345,26 @@ void ClassTable::decl_attr(attr_class* current_attr, class__class* current_class
 			<< " is trying to redefine method " << current_attr->get_name() << " as an attribute." << endl;
 		return;
 	}
-
+	
+	//add attribute to symbol table
 	symbol_table.addid(current_attr->get_name(), current_attr->get_type());
 }
 
+
+
 void ClassTable::decl_method(method_class* current_method, class__class* current_class)  {
+	
+	//get formals of class
 	Formals formals = current_method->get_formals();
 	int formals_len = formals->len();
+
+	//arguments
 	std::vector<Symbol> arg_names;
+
+	//for each formal check if name is "self"
+	//or if same name is used define multiple attributes 
+	//pass error
+	//if not insert to arg_names vector
 	for(int i = 0; i < formals_len; i++) {
 		Symbol name = (static_cast<formal_class*>(formals->nth(i)))->get_name();
 		if (name == self) {
@@ -402,29 +422,45 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 	method_def->push_back(new_def);
 }
 
+
 void ClassTable::type_check_attr(attr_class* current_attr, class__class* current_class) {
+	//check attribute type
+	
 	Expression init = current_attr->get_init();
 	Symbol attr_type = current_attr->get_type();
+
+	//if not NULL expr call type check on expression
 	if (init->expression_type() != ExpressionType::no_expr) {
 		type_check_expression(init, current_class, attr_type);
 	}
 }
 
 void ClassTable::type_check_method(method_class* current_method, class__class* current_class) {
+	//check method type
+
 	Expression expr = current_method->get_expression();
 	Symbol return_type = current_method->get_return_type();
+
 	symbol_table.enterscope();
+
 	Formals formals = current_method->get_formals();
 	int formals_len = formals->len();
+	
+	//for each formal add to symbol table
 	for(int i = 0; i < formals_len; i++) {
 		Symbol name = (static_cast<formal_class*>(formals->nth(i)))->get_name();
 		Symbol type = (static_cast<formal_class*>(formals->nth(i)))->get_type();
 		symbol_table.addid(name, type);
 	}
-
+	
+	//call type check on expression
 	type_check_expression(expr, current_class, return_type);
+
 	symbol_table.exitscope();
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 #define TYPE_CHECK_ARITH_EXPR_SAME_TYPE(EXPR, CLASS, TYPE)  TYPE_CHECK_ARITH_EXPR(EXPR, CLASS, TYPE,  TYPE)
 
@@ -437,6 +473,8 @@ void ClassTable::type_check_method(method_class* current_method, class__class* c
 }
 
 Symbol ClassTable::type_check_expression(Expression expr, class__class* current_class, Symbol expected_type) {
+
+	//symbol to store type of entire expression
 	Symbol final_type;
 
 	// Handle different expressions
