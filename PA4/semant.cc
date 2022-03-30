@@ -576,13 +576,17 @@ Symbol ClassTable::type_check_expression(Expression expr, class__class* current_
 }
 
 bool invalid_comparison(Symbol a, Symbol b) {
+	//check for comparison of two symbols
+	// return true if not basic type or both not of equal type
 	bool has_basic_type = a == Int || a == Str || a == Bool;
 	return has_basic_type  && a != b;
 }
 
 void ClassTable::type_check_eq(eq_class* eq, class__class* current_class) {
+	//type check for equal
 	Symbol left_type = type_check_expression(eq->get_left_operand(), current_class, Object);
 	Symbol right_type = type_check_expression(eq->get_right_operand(), current_class, Object);
+
 	if (invalid_comparison(left_type, right_type) || invalid_comparison(right_type, left_type)) {
 		LOG_ERROR(current_class)
 			<< "Illegal comparison between " << left_type << " and " << right_type << endl;
@@ -590,8 +594,11 @@ void ClassTable::type_check_eq(eq_class* eq, class__class* current_class) {
 }
 
 Symbol ClassTable::type_check_assign(assign_class* assign, class__class* current_class) {
+	//type checking on assignment
+	
 	Symbol type = Object;
 	Symbol name = assign->get_name();
+
 	if (name == self) {
 		LOG_ERROR(current_class)
 			<< "Trying to assign to 'self'." <<  endl;
