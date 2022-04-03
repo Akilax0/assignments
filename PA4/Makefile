@@ -56,10 +56,10 @@ symtab_example: symtab_example.cc
 	${CC} ${CFLAGS} -c $<
 
 lexer:
-	cp ${CLASSDIR}/PA2/lexer lexer
+	cp ${CLASSDIR}/../bin/lexer lexer
 
 parser:
-	cp ${CLASSDIR}/PA3/parser parser
+	cp ${CLASSDIR}/../bin/parser parser
 
 dotest:	semant good.cl bad.cl
 	@echo "\nRunning semantic checker on good.cl\n"

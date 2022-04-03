@@ -165,6 +165,9 @@ Instructions
 Write-up for PA4
 ----------------
 
+The semantic analyzer works mainly in two parts
+	1) Identifying/ Checking inheritance for the defined classes
+	2) 
 
 
 
