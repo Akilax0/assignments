@@ -235,12 +235,12 @@ void ClassTable::decl_class(class__class * current_class) {
 	for (int i = 0; i < features_len; i++) {
 		Feature feature = features->nth(i);
 		switch (feature->feature_type()) {
-			case FeatureType::attr:
-				decl_attr(static_cast<attr_class*>(feature), current_class);
-				break;
-			case FeatureType::method:
-				decl_method(static_cast<method_class*>(feature), current_class);
-				break;
+		case FeatureType::attr:
+			decl_attr(static_cast<attr_class*>(feature), current_class);
+			break;
+		case FeatureType::method:
+			decl_method(static_cast<method_class*>(feature), current_class);
+			break;
 		}
 	}
 
