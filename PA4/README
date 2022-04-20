@@ -166,12 +166,106 @@ Write-up for PA4
 ----------------
 
 The semantic analyzer works mainly in two parts
-	1) Identifying/ Checking inheritance for the defined classes
-	2) 
+	1) Identifying/ checking inheritance for the defined classes
+	2) Check the graph is well-formed
+	3) For each identified class 
+		a) Traverse the AST while gathering visible declarations in a
+		symbol table.
+		b) Check each expression for type correctness
+		c) Annotate the AST with types.
 
+	
 
 Edited files
 	semant.cc
+	
+	ClassTable::ClassTable
+		Constructor method for class table. Responsible for class type
+		checking and inheritance. The method begins by getting a 
+		classes list and installing them. (Adding classes to the 
+		classes table)
+		At this stage error checks are done for 
+			1. type == SELF_TYPE
+				Omitted as redundant of classes tree.
+			2. repeated classes
+				classes table contains unique entries for each 
+				class
+
+		Once the installing process is done we have a list of classes 
+		(classes_table) created for the program. Next checks for correct
+		inheritance is done.
+			flag valid_inheritance is used to keep track of the
+		correct inheritance.
+		
+		Iterates through the class list while recording parent classes
+		and children.
+		Here checks are done to see if
+			1. parent class is valid
+			2. check if current class is inherited form anything 
+			other than object and IO classes.
+			3. cyclic inhreitance
+				iterate through the recorded parents if the
+				class has been encountered. If so inheritance
+				cycle making the inheritance check invalid.
+		At the end of the method if inheritance is valid three methods
+		are called.
+			1. traverse AST and adding declarations  ->
+				decl_class(root_class)
+			2. Do type checking on the AST ->
+				type_check_class(root_class)
+			3. Check for main class / main method 
+				
+
+
+	
+	ClassTable::decl_class
+		Method to declare classes found on the AST. Initially we get a
+		list of features for the class considered, then iterates through
+		each and declare methods and attributes. At the end,  for all
+		children classes of the current class call decl_class to keep
+		moving through the AST.
+
+	ClassTable::type_check_class 
+		The method reads class name / Symbol and checks if it belongs to
+		one of the base classes.
+			Obect, Int, Str, Bool , IO
+
+		if the class type check passes iterate through the list of
+		features of the class and call ype checking on the attributes
+		and methods using, 
+			type_check_attr()
+			type_check_method()
+
+		At the the end check for type of child classes calling the
+		method,
+			type_check_class()
+
+	ClassTable::decl_attr
+		Method called to declare an attribute of a given class.Checks
+		done, 
+			1. If attribute type is defined or if SELF_TYPE it is
+			allowed.
+			2. self as  a attribute name is not allowed.
+			3. Check for predefined attributes and methods. If so
+			error.
+
+		If the checks are satisfied adds the attribute to the symbol
+		table. 
+
+	ClassTable::decl_method
+		Method called to declare a method of a given class. Iterates
+		through the formals of the method while keeping track of the
+		argument symbols. For each formal,
+			1. self is not allowed (cannot bind self as a parameter)
+			2. Check among other arguments to see if repeated. Not
+			allows to have arguments with same name.
+			
+
+Testing
+
+	good.cl
+
+	bad.cl
 
 
 
