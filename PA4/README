@@ -258,9 +258,128 @@ Edited files
 		argument symbols. For each formal,
 			1. self is not allowed (cannot bind self as a parameter)
 			2. Check among other arguments to see if repeated. Not
-			allows to have arguments with same name.
-			
+			allowed to have arguments with same name.
+	 	if the checks are satisfied add the names to the argument list.
 
+	Note: Method declarations
+
+
+	ClassTable::type_check_attr 
+		Checks the attribute type when an attribute and its class is paassed to
+		the methhod. Get the exression of the attribute and the symbol(type). If
+		the expression type is not NULL call type_check_expression. 
+
+	ClassTable::type_check_method 
+		Iterates through the list of formals for the passed method and adds them
+		to the symbol table. Calls type check expression for the method
+		expression.	
+
+	ClassTable::type_check_expression
+		Most of the above methods use this function as expressions are the base
+		of formals, methods, and attributes. According to the type of the
+		expression passed to the function the final type is assigned by looking
+		at the correct type usages. Implentation is of the form of a switch case
+		statement.
+
+		The first set of expressions calls methods defined for the relevent
+		expressions. 
+			assign,static_dispatch, cond, typecase, block, loop, new_, object,
+			let
+
+		Next are the arithmetic checks,
+			eq, lt, leq
+
+		??
+			neg, comp, isvoid
+		
+		Checking for the same type (arithmetic)
+			plus,sub, mul, divide
+	
+		Constants with direct final type declarations
+			string_const--> Str
+			bool_const --> Bool
+			int_const --> Int
+			no_expr --> No_type
+
+		For the inalid expressions an Obyect is declared as final with error
+		message. All the other (default) would get an "unhandled expression "
+		message.
+
+		If final type is not No_type and returns false on is_descendant which
+		checks if final type is a descende of the expected type error message is
+		given for the type conversion. 
+
+	invalid_comparison
+		When two symbols are passed checks if both are not equal types and does
+		not belong to any basic types.
+
+	From here on out the methods for type checking for different scenarios are
+	documented.
+
+
+	type_check_eq
+		Gets the types defined by type_check_expression for the two 
+
+	type_check_assign 
+		Checks if the name is self or else check the symbol table for the name
+		to see if the identifier is declared. Returns the expr_type by calling
+		check expression.
+
+	type_check_static_dispatch
+		Gets dispatch type and returns error message if NULL given for the type
+		lookup on the class table. handle_dispatch is called to get the return
+		type. If return type is SELF_TYPE the object type of the expression is
+		assigned to it. 
+
+	type_check_dispatch
+		Gets the object type by calling type check on expression and assigns
+		return_type by calling handle_dispatch. If the return type is SELF_TYPE
+		assign the object type to it.
+
+	handle_dispatch
+		Handle dispatch is called after type checking the expressions. Here the
+		expression, Symbol name and arguments are passed. Iterating throught 
+		the arguments checjs are done for the argument expression types. If the
+		argument type is read as SELF_TYPE the current class symbol is given to
+		it. The argument types are stored in a vector. The dispatch type itself
+		is checked for SELF_TYPE if so current class symbol is assigned as the
+		dispatch type. 
+
+		The dispatch is searched for in the method table to see if defined or
+		not. If so the the declaration is read by method_decls. If this is NULL
+		we pass the error as undefined method call. 
+
+		Going through the declarations we check if the arguments stored for the
+		current dispatch is descendent of any of them. In other words we check
+		for a match. If it matches the found declaration return type is assigned
+		to the current dipatch return type. Or else error message passed to show
+		that no declarations are found for the specified argument types. 
+
+	type_check_cond
+
+		
+
+	type_union
+
+	type_check_typecase
+
+	type_check_block
+
+	type_check_object
+
+	type_check_let
+
+	type_check_new_
+
+	type_check_loop
+
+	is_descendant
+
+	install-basic_classes
+
+
+		
+		
 Testing
 
 	good.cl

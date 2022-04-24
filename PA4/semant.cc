@@ -147,6 +147,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 			//lookup parent symbol 	
 			class__class* parent = static_cast<class__class*>(classes_table.lookup(parent_symbol));
 
+			//checking if parent is available
 			if (parent == NULL)  {
 				valid_inheritance = false;
 				LOG_ERROR(current_class)
@@ -198,6 +199,7 @@ ClassTable::ClassTable(Classes classes) : semant_errors(0) , error_stream(cerr) 
 				parent->children.push_back(current_class->get_name());
 			}
 
+			//the parent becomes the current class
 			current_class = parent;
 		}
 	}
@@ -327,6 +329,7 @@ void ClassTable::decl_attr(attr_class* current_attr, class__class* current_class
 		return;
 	}
 
+	//Check for previous dfinitons in the symbol table for the current attribute
 	Symbol previous_def = symbol_table.lookup(current_attr->get_name());
 
 	if (previous_def != NULL) {
@@ -336,7 +339,7 @@ void ClassTable::decl_attr(attr_class* current_attr, class__class* current_class
 		return;
 	}
 
-
+	// Check for the previous definitions for the method in the method table
 	MethodDeclarations method_def = method_table.lookup(current_attr->get_name());
 
 	if (method_def != NULL) {
@@ -358,7 +361,7 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 	Formals formals = current_method->get_formals();
 	int formals_len = formals->len();
 
-	//arguments
+	//arguments list
 	std::vector<Symbol> arg_names;
 
 	//for each formal check if name is "self"
@@ -383,8 +386,11 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 		arg_names.push_back(name);
 	}
 
+	// create new method declaraion for the current method
 	MethodDeclaration new_def = MethodDeclaration::from_method_class(current_method);
 
+	// get the undeclared types found in the method declaration 
+	// IF theres any pass error message
 	std::vector<Symbol> undeclared_types = new_def.get_undeclared_types(classes_table);
 	if (undeclared_types.size() > 0) {
 		for (Symbol type: undeclared_types) {
@@ -394,6 +400,7 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 		return;
 	}
 
+	//checkfor previous declarations for the current method
 	Symbol previous_def = symbol_table.lookup(current_method->get_name());
 
 	if (previous_def != NULL) {
@@ -403,8 +410,11 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 		return;
 	}
 
+
+	//  Check for method already defined in the method table
 	MethodDeclarations method_def = method_table.lookup(current_method->get_name());
 
+	// If not add the method to the method table with its declaration
 	if (method_def == NULL)  {
 		method_def = new std::vector<MethodDeclaration>;
 		method_table.addid(current_method->get_name(), method_def);
@@ -419,6 +429,7 @@ void ClassTable::decl_method(method_class* current_method, class__class* current
 			}
 		}
 	}
+
 	method_def->push_back(new_def);
 }
 
@@ -438,11 +449,13 @@ void ClassTable::type_check_attr(attr_class* current_attr, class__class* current
 void ClassTable::type_check_method(method_class* current_method, class__class* current_class) {
 	//check method type
 
+	//Get the expression and return type (symbol) for the method
 	Expression expr = current_method->get_expression();
 	Symbol return_type = current_method->get_return_type();
 
 	symbol_table.enterscope();
 
+	//Get list of formals
 	Formals formals = current_method->get_formals();
 	int formals_len = formals->len();
 	
@@ -498,6 +511,8 @@ Symbol ClassTable::type_check_expression(Expression expr, class__class* current_
 			final_type = type_check_block(static_cast<block_class*>(expr), current_class);
 			break;
 		case ExpressionType::loop:
+			// loop the final type is declared as Object call type_check_loop
+			// for....
 			final_type =  Object;
 			type_check_loop(static_cast<loop_class*>(expr), current_class);
 			break;
