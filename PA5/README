@@ -152,3 +152,38 @@ Instructions
 Write-up for PA5
 ----------------
 
+The code generator basically takes the AST and generates code for it.
+It does this by traversing the AST and emitting code for each node.
+First all the metadata needed for the code generation is generated,
+then the code is generated. 
+
+The object layout describes the location of attributes, as follows:
+	Class tag
+	Object size
+	Dispatch pointer
+	Attributes
+So the condegenerator traverses the AST and finds all the constants that
+need to be emitted, and emits them.
+
+Then the actual code is printed into the output file.
+
+Edited files
+	semant.cc
+
+	CgenClassTable::code_constants()
+		Add constants that are required by the code generator.
+	
+	CgenClassTable::code_class_nameTab()
+		The method prints the class name table. The method prints 
+		all the childs of the nodes in the class name table.
+	
+	CgenClassTable::code_class_objTab()
+		The method prints the class object table. The method traverse through all the nodes in the class object table and prints the class name
+	
+	CgenClassTable::code_dispatchTabs()
+		Method traverse through all the nodes in the dispatch table and prints the mthod names of each classes
+	
+	code(ostream& s, CgenNode* class_node)
+		The method prints the code for the class. 
+
+	The explanations of the code generation part can be found as comments in the cgen.cc file.
