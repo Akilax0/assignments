@@ -314,4 +314,92 @@ Global Tables
 			.word	str_constant50
 			.word	int_constant61
 		
-		
+------------------------------------------
+Emit code for initialization mehod of each class
+------------------------------------------
+
+For every class in class node, the codes are initialized.
+
+	<ClassName>_init:
+		# push fp, s0, ra
+		addiu   $sp $sp -12
+		sw      $fp 12($sp)
+		sw      $s0 8($sp)
+		sw      $ra 4($sp)
+
+		# fp now points to the return addr in stack
+		addiu   $fp $sp 4
+
+		# move the value in the accumilator to the self register
+		move    $s0 $a0
+
+		# Link to the parent if there is a one
+		jal     Object_init
+
+		# load each attribute to a0 and save them the register with
+		a fixed offset
+		la	$a0 int_const10
+		sw	$a0 offset($s0)
+
+		# ret = SELF
+		move    $a0 $s0
+
+		# pop fp, s0, ra
+		lw      $fp 12($sp)
+		lw      $s0 8($sp)
+		lw      $ra 4($sp)
+		addiu   $sp $sp 12
+
+		# return
+		jr      $ra
+
+------------------------------------------
+Emit code for methods of each methods
+------------------------------------------
+
+	class.method:
+			# push fp, s0, ra
+			addiu   $sp $sp -12
+			sw      $fp 12($sp)
+			sw      $s0 8($sp)
+			sw      $ra 4($sp)
+
+			# fp now points to the return addr in stack
+			addiu   $fp $sp 4
+
+			# SELF = a0
+			move    $s0 $a0
+
+			# evaluating expression and put it to ACC
+			
+			- pop fp, s0, ra from stack
+				lw	$fp 12($sp)
+				lw	$s0 8($sp)
+				lw	$ra 4($sp)
+				addiu	$sp $sp 12
+
+			- pop arguments from the stack
+
+			- jump to return address
+				jr	$ra
+
+------------------------------------------
+Error handling
+------------------------------------------
+
+Runtime errors will terminate the programme.
+
+dispatch abort
+	Called when a dispatch is attempted on a void object. Prints the line
+	number, from $t1, and filename, from $a0, at which the dispatch
+	occurred, and aborts.
+
+case abort 
+	Should be called when a case statement has no match.
+	The class name of the object in $a0 is printed, and execution halts.
+
+case abort2 
+	Called when a case is attempted on a void object. Prints the line
+	number, from $t1, and filename, from $a0, at which the dispatch
+	occurred, and aborts.
+
