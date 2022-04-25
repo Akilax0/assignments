@@ -168,22 +168,150 @@ need to be emitted, and emits them.
 Then the actual code is printed into the output file.
 
 Edited files
-	semant.cc
+	cgen.cc
+		Contains all the code for the code generator and fuctions for
+		emit MIPS code.
 
-	CgenClassTable::code_constants()
-		Add constants that are required by the code generator.
-	
-	CgenClassTable::code_class_nameTab()
-		The method prints the class name table. The method prints 
-		all the childs of the nodes in the class name table.
-	
-	CgenClassTable::code_class_objTab()
-		The method prints the class object table. The method traverse through all the nodes in the class object table and prints the class name
-	
-	CgenClassTable::code_dispatchTabs()
-		Method traverse through all the nodes in the dispatch table and prints the mthod names of each classes
-	
-	code(ostream& s, CgenNode* class_node)
-		The method prints the code for the class. 
+	cgen.h
+		Contains all the method declaration.
 
-	The explanations of the code generation part can be found as comments in the cgen.cc file.
+	cool-tree.h
+		add method declerations to the following classes
+			method_class
+				IsMethod()
+				code(ostream& stream, CgenNode* class_node)
+				GetArgNum()
+			static_dispatch_class
+				GetActuals()
+			typecase_class
+				GetCases()
+
+	cool-tree.handcode.h
+		add class Environment
+
+	Makefile
+		-std=c++11
+
+1. Emit code for global constants
+----------------------------------
+
+CgenClassTable::code_global_data()
+
+		Define global names as follows
+
+			.globl  class_nameTab
+			.globl  Main_protObj
+			.globl  Int_protObj
+			.globl  String_protObj
+			.globl  bool_const0
+			.globl  bool_const1
+			.globl  _int_tag
+			.globl  _bool_tag
+			.globl  _string_tag
+		
+		The tag of the Int, String, and Bool classes.
+
+		_int_tag:
+				.word   2
+		_bool_tag:
+				.word   3
+		_string_tag:
+				.word   4
+		
+		Then metadata for the string, int , and boolean constants are emitted
+
+			The cgen generates a string object for every string structured 
+			as follows
+
+				str_constn:
+					.word	class tag (4)
+					.word	object size
+					.word	String_dispTab
+					.word	string length (int constant)
+					.ascii	string constant
+					.byte	0	
+					.align	2
+			
+			Generates an int object for every int definition as structured 
+			as follows
+				int_constn:
+					.word	class tag (2)
+					.word	object size (4)
+					.word	Int_dispTab
+					.word	integer value
+
+			The boolean 0 and 1 objects are defined as follows
+
+			bool_const0:
+				.word	class tag (3)
+				.word	object size (4)
+				.word	Bool_dispTab
+				.word	0
+				
+			bool_const1:
+				.word	class tag (3)
+				.word	object size (4)
+				.word	Bool_dispTab
+				.word	1
+
+------------------------------------------
+Global Tables
+------------------------------------------
+
+	Class Name Table
+
+		code_class_nameTab()
+		The class name table is a global table that contains all the class names
+
+			class_nameTab:
+					.word   str_const7
+
+	Class object table
+
+		code_class_objTab()
+		Contains the class object for every class in the program.
+
+			class_objTab:
+				.word   Object_protObj
+				.word   Object_init
+				.word   IO_protObj
+				.word   IO_init
+				.word   Int_protObj
+				.word   Int_init
+				.word   Bool_protObj
+				.word   Bool_init
+				.word   String_protObj
+				.word   String_init
+				.word   List_protObj
+				.word   List_init
+				.word   Cons_protObj
+				.word   Cons_init
+				.word   Nil_protObj
+				.word   Nil_init
+				.word   Main_protObj
+				.word   Main_init
+
+	Coding dispatch tables
+
+		code_dispatch_table()
+		All the metadata associated with each object and all the location data
+		is described in the dispatch tables.
+
+		For each and ever class node a dispatch table is printed and 
+		it contains some methods related to each class. Always the 
+		first three methods are Object.abort, Object.type_name, and Object.copy.
+
+	Prototype Objects
+
+		code_prototype_objects()
+		Generates a prototype object definition for every class node.
+		The structure of the prototype object is as follows
+
+		class_protObj:
+			.word	class tag
+			.word	size
+			.word	class_dispTab
+			.word	str_constant50
+			.word	int_constant61
+		
+		
