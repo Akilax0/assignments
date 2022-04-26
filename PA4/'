@@ -603,8 +603,6 @@ void ClassTable::type_check_eq(eq_class* eq, class__class* current_class) {
 	Symbol left_type = type_check_expression(eq->get_left_operand(), current_class, Object);
 	Symbol right_type = type_check_expression(eq->get_right_operand(), current_class, Object);
 
-	//check for legal comparison by checking either left right swapped types are
-	//invalid comparisons
 	if (invalid_comparison(left_type, right_type) || invalid_comparison(right_type, left_type)) {
 		LOG_ERROR(current_class)
 			<< "Illegal comparison between " << left_type << " and " << right_type << endl;
@@ -826,7 +824,7 @@ Symbol ClassTable::type_union(Symbol t1, Symbol t2, class__class* current_class)
 }
 
 Symbol ClassTable::type_check_typcase(typcase_class* typcase, class__class* current_class) {
-	//checks for case expression types
+	//checks for typecase
 	type_check_expression(typcase->get_expression(), current_class, Object);
 
 	//get cases list
@@ -838,14 +836,11 @@ Symbol ClassTable::type_check_typcase(typcase_class* typcase, class__class* curr
 	//vector to store branch types 
 	std::vector<Symbol> branches_types;
 
-	//For each case branch get identifier, type 
+	//For each cases
 	for (int i = 0 ; i < cases->len() ; i++) {
-
 		branch_class* branch = static_cast<branch_class*>(cases->nth(i));
 		Symbol identifier = branch->get_name();
 		Symbol type = branch->get_type();
-
-		//check if the type is defined in the class
 		class__class* type_ptr = static_cast<class__class*>(classes_table.lookup(type));
 
 
@@ -855,44 +850,27 @@ Symbol ClassTable::type_check_typcase(typcase_class* typcase, class__class* curr
 			continue;
 		}
 
-		//for all branch types check if recurring types.
-		//If found error message
 		if (std::find(begin(branches_types), end(branches_types), type) != end(branches_types)) {
 			LOG_ERROR(current_class)
 				<< "Several branches with the type " << type << endl;
 			continue;
 		}
-	
-		// Add current type to branches_types vector  
+		
 		branches_types.push_back(type);
-
-
 		symbol_table.enterscope();
-
-		//Add identifiers to symbol table
 		symbol_table.addid(identifier, type);
-
-		//Get brnch type
 		Symbol branch_type = type_check_expression(branch->get_expression(), current_class, Object);
 		symbol_table.exitscope();
-
-		//if return type still null assign branch_type
 		if (return_type == nullptr) {
 			return_type = branch_type;
 		}
-
-		// Assign the union of branch and return type
 		return_type = type_union(return_type, branch_type, current_class);
 	}
 	return return_type;
 }
 
 Symbol ClassTable::type_check_block(block_class*  block, class__class* current_class) {
-
-	//type checking a block	
 	Symbol last_type;
-	// Iterating throught the expressions in the block type check for Object
-	// Returns last expressions type as per COOL block rules 
 	for (int i = 0; i < block->get_body()->len(); i++) {
 		last_type = type_check_expression(block->get_body()->nth(i), current_class, Object);
 	}
@@ -900,19 +878,10 @@ Symbol ClassTable::type_check_block(block_class*  block, class__class* current_c
 }
 
 Symbol ClassTable::type_check_object(object_class* object, class__class* current_class) {
-
-	//type checking of object
-	//check if object name is self
-	//then returns type as SELF_TYPE
 	if (object->get_name() == self) {
 		return SELF_TYPE;
 	}
-
-	//type of object by lookup table 
 	Symbol type = symbol_table.lookup(object->get_name());
-
-	//if type from lookup table is NULL 
-	//error as undeclared identifier
 	if (type == NULL) {
 		LOG_ERROR(current_class)
 			<< "Undeclared identifier " << object->get_name() << endl;
@@ -922,10 +891,7 @@ Symbol ClassTable::type_check_object(object_class* object, class__class* current
 }
 
 Symbol ClassTable::type_check_let(let_class* let, class__class* current_class) {
-	//type check for let expression
 	symbol_table.enterscope();
-
-	//get type of let
 	Symbol type = let->get_type();
 	class__class* type_ptr = static_cast<class__class*>(classes_table.lookup(type));
 	Symbol identifier = let->get_identifier();
@@ -935,36 +901,22 @@ Symbol ClassTable::type_check_let(let_class* let, class__class* current_class) {
 			<< "Undefined type in let binding " << type << endl;
 		return Object;
 	}
-
-	// check if let binding is trying to bind itself
 	if (identifier == self) {
 		LOG_ERROR(current_class)
 			<< "Trying to bind self in let binding" << endl;
 		return Object;
 	}
-
-	//add identifier to the symbol table
 	symbol_table.addid(identifier, type);
-
-	//type checking the let expression initialization
 	type_check_expression(let->get_init(), current_class, type);
-
-	//let body type check 
-	//returns type of the let body
 	Symbol let_type = type_check_expression(let->get_body(), current_class, Object);
 	symbol_table.exitscope();
 	return let_type;
 }
 
 Symbol ClassTable::type_check_new_(new__class* new_, class__class* current_class) {
-	//type check of new_
-	//
-	//if the type of new_ is SELF_TYPE return it
 	if (new_->get_type() == SELF_TYPE) {
 		return SELF_TYPE;
 	}
-
-	//Check if the new expression is of defined type
 	Symbol type = new_->get_type();
 	class__class* type_ptr = static_cast<class__class*>(classes_table.lookup(type));
 	if (type_ptr == NULL) {
@@ -976,10 +928,10 @@ Symbol ClassTable::type_check_new_(new__class* new_, class__class* current_class
 }
 
 void ClassTable::type_check_loop(loop_class* loop, class__class* current_class) {
+	//check predict and body 
 	//check if loop predict as Bool
-	//check if loop Body is object
+	//check if loop Body is obect
 	Symbol predict_check =  type_check_expression(loop->get_predicate(), current_class, Bool);
-
 
 	if (predict_check == BOOL) {
 		LOG_ERROR(current_class)
@@ -990,27 +942,17 @@ void ClassTable::type_check_loop(loop_class* loop, class__class* current_class) 
 }
 
 bool ClassTable::is_descendant(Symbol desc, Symbol ancestor, class__class* current_class) {
-	//checking if descendent
-	
-	//if descendent is same as ancestor return true
 	if (desc == ancestor) {
 		return true;
 	}
-
-	// if decdendent is of self type as class to it 
 	if (desc == SELF_TYPE) {
 		desc = current_class->get_name();
 	}
-
-	// iterates through the inheritance tree
 	class__class *current_type = static_cast<class__class*>(classes_table.lookup(desc));
 	while (current_type != NULL) {
-		//if same type as ancestor returns true
 		if (current_type->get_name()  == ancestor) {
 			return true;
 		}
-
-		// assignings parent of the current to current_type
 		Symbol parent_symbol = current_type->get_parent();
 		class__class *parent_type = static_cast<class__class*>(classes_table.lookup(parent_symbol));
 		current_type = parent_type;
@@ -1193,9 +1135,6 @@ void program_class::semant()
 }
 
 MethodDeclaration MethodDeclaration::from_method_class(method_class * method) {
-	//Method declarations for methods other than the basic classes
-	// Stores defined methods in the MethodDeclaration 
-	// iterates through formals and stores them as arguments
 	MethodDeclaration result;
 	result.return_type = method->get_return_type();
 	Formals formals = method->get_formals();

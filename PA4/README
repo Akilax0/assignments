@@ -165,6 +165,10 @@ Instructions
 Write-up for PA4
 ----------------
 
+E/17/072 Dissanayake D.M.D.R.
+E/17/154 Karunanayake A.I.
+
+
 The semantic analyzer works mainly in two parts
 	1) Identifying/ checking inheritance for the defined classes
 	2) Check the graph is well-formed
@@ -309,7 +313,7 @@ Edited files
 		checks if final type is a descende of the expected type error message is
 		given for the type conversion. 
 
-	invalid_comparison
+	ClassTable::invalid_comparison
 		When two symbols are passed checks if both are not equal types and does
 		not belong to any basic types.
 
@@ -317,26 +321,26 @@ Edited files
 	documented.
 
 
-	type_check_eq
+	ClassTable::type_check_eq
 		Gets the types defined by type_check_expression for the two 
 
-	type_check_assign 
+	ClassTable::type_check_assign 
 		Checks if the name is self or else check the symbol table for the name
 		to see if the identifier is declared. Returns the expr_type by calling
 		check expression.
 
-	type_check_static_dispatch
+	ClassTable::type_check_static_dispatch
 		Gets dispatch type and returns error message if NULL given for the type
 		lookup on the class table. handle_dispatch is called to get the return
 		type. If return type is SELF_TYPE the object type of the expression is
 		assigned to it. 
 
-	type_check_dispatch
+	ClassTable::type_check_dispatch
 		Gets the object type by calling type check on expression and assigns
 		return_type by calling handle_dispatch. If the return type is SELF_TYPE
 		assign the object type to it.
 
-	handle_dispatch
+	ClassTable::handle_dispatch
 		Handle dispatch is called after type checking the expressions. Here the
 		expression, Symbol name and arguments are passed. Iterating throught 
 		the arguments checjs are done for the argument expression types. If the
@@ -355,36 +359,120 @@ Edited files
 		to the current dipatch return type. Or else error message passed to show
 		that no declarations are found for the specified argument types. 
 
-	type_check_cond
-
+	ClassTable::type_check_cond
+		Type checking for the conditional statements. The 'then' and 'else'
+		expressions are checked for type and the final conditional type is
+		returned as a union between theses two.
 		
 
-	type_union
+	ClassTable::type_union
+		Returns the common type of given two symbols. This is done by intially
+		creating two stacks for the two given symbols iterate through the
+		inheritance trees of each class and add them to the stacks . Then moves
+		through the stack popping elements and checking the two top values in each
+		iteration for the same type. The last occured common type becomes the
+		return of the type_union. 
 
-	type_check_typecase
+	ClassTable::type_check_typecase
+		Checks the type of case statements. Goes through the cases and get the
+		case branch identifiers and their types. Check if the types are defined
+		in the class if not error message noifying that undefined type is used
+		in the case branch. Checks also done for the multiple branches of the
+		same type and logs error if so. Keep the branch types saved in a symbol
+		vector. Call the type check ecxpression on the branch expression. If the
+		return type is still a null_ptr assign the return if the type check to
+		the return. Finally call union on the current return and the branch type
+		for the final return.
 
-	type_check_block
+	ClassTable::type_check_block
+		Type checking of a block in COOL. As the block is a collection of
+		expressions and the return is its last type value we iterate through
+		the expressions and get the last_type. 
 
-	type_check_object
+	ClassTable::type_check_object
+		Checks done on object type checking,
+			If the object name is self , then returns SELF_TYPE. Get the type
+			from the lookup table and check if the return from the lookup is
+			NULL. If so logs error as the identifier is undeclared.
 
-	type_check_let
+	ClassTable::type_check_let
+		Type check for let expressions. Get the type of and identifier for the
+		expression along with a pointer to the lookup table entry of the type.
+		Checks are done , 
+			If the type is not SELF_TYPE and the type ptr is NULL meaning no
+			entry in the symbol table error is logged stating the type of let
+			binding is undeclared. 'self'identifier is not allowed hence the
+			check for self binding and error message. If the checks are passed
+			the identifier and type is added to the symbol table and type check
+			is done on the initialization of the let expression. The method
+			returns the let body type.
 
-	type_check_new_
+	ClassTable::type_check_new_
+		if the new_ type is SELF_TYPE returns it. If the lookup table entry is
+		not available returns error as it is an undefined new expression.
 
-	type_check_loop
+	ClassTable::type_check_loop
+		Type checking for loops in COOL. The predict and the body is type
+		checked seperately, however the check for predict type being BOOL return
+		error if not satidfied. 
 
-	is_descendant
+	ClassTable::is_descendant
+		Given two symbols check if descendent relationship is satisfied. If the
+		already given types are the same we return true. If the descenedent is
+		with SELF_TYPE we assign the type of passed current class. A lookup for
+		the descenedent is done and iterates through the inheritance to check if
+		the type equates to the ancestor at some point. The iteration is
+		continued by assigning parent type for to the current type of decendent. 
 
-	install-basic_classes
+	ClassTable::install-basic_classes
+		Before the declare methods are called through the semantic anlyzer at
+		initialization the basic classes are installed. 
 
-
-		
-		
 Testing
+--------------------
+
+Initial tests were done by simply runnning the provided two files of good.cl and
+bad.cl
 
 	good.cl
+		The COOL program contains a class named C, with attributes of Int a and
+		a Bool b. An init method is defined taking to parameters of x (Int) and
+		y (Bool). These are assigned to the a,b attributes. In the Main method
+		the init method is called.
+
+		Running the file through the lexer gives an output of,
+			All the identified identifiers and type identifiers alnog with the
+			operators used. The parser output breaks the program into
+			identifiable chunks, but lacks certain type information. Finally
+			running the sematnic analyzer we can see how the correct types get
+			assigned for the expressions.
+
+
+			LEXER OUTPUT  --> good_lex
+			PARSER OUTPTU --> good_parse
+			SEMANT OUTPUT --> good_semant
+
 
 	bad.cl
+	 The COOL program contains incorrect method calls. As mentioned before the C
+	 class with the init method is used as is here but the calls to the init
+	 method happens incorrectly. 
+
+	 (new C).init(1,1)	
+		Calls init method but doesnt give the second parameter type of Bool.
+		
+		bad.cl:16: In call of method init, type Int of parameter y does not conform to declared type Bool.
+
+	(new C).init(1,true,3)
+		Passes extra parameter.
+
+		bad.cl:17: Method init called with wrong number of arguments.
+
+	(new C).iinit(1,true)
+		calls undefined method
+
+		bad.cl:18: Dispatch to undefined method iinit.
+
 
 
 
