@@ -475,6 +475,50 @@ bad.cl
 
 
 
+Testing
+----------
+
+For testing good and bad test files were used,
+	Good
+
+		test1.cl - Illustrates inheritance - Semant gives the correct output 
+		test2.cl - Creating a method with name self() is allowed - Semant gives the correct output
+		test3.cl - Attributes and initialization - Semant gives the correct output
+		test4.cl - Rules for dispatch - Semant gives the correct output
+		test5.cl - Test rules of methods - Semant gives the correct output
+		test6.cl - Type annotations of constants - Semant gives the correct output
+		test7.cl - Rules for identifiers - Semant gives the correct output
+		test8.cl - Type annotations for assignments - Semant gives the correct output
+
+	Bad
+		test1.cl - Same class defined twice
+			test1.cl:15: Class Classx was previously defined.
+			Compilation halted due to static semantic errors.
+		test2.cl - No Main class
+			Class Main is not defined.
+			Compilation halted due to static semantic errors.
+		test4.cl - Class being inherited from does not exist
+			test4.cl:7: Class B inherits from an undefined class C.
+			Compilation halted due to static semantic errors.
+		test5.cl - Creating object of non-existent class
+			test5.cl:4: Class B of attribute a is undefined.
+			Compilation halted due to static semantic errors.
+		test6.cl - Repeat attribute in inherited class
+			test6.cl:8: Attribute a is an attribute of an inherited class.
+			test6.cl:16: Attribute c is an attribute of an inherited class.
+			Compilation halted due to static semantic errors.
+		test7.cl - Function redefinition with different signature or return type
+			test7.cl:10: In redefined method f1, return type String is different from original return type Int.
+			test7.cl:22: In redefined method f2, parameter type String is different from original type Int
+			test7.cl:34: Incompatible number of formal parameters in redefined method f3.
+			Compilation halted due to static semantic errors.
+		test8.cl - Initialize attribute with non-conforming type
+			test8.cl:21: Inferred type A of initialization of attribute a2 does not conform to declared type B.
+			test8.cl:23: Inferred type D of initialization of attribute a4 does not conform to declared type B.
+			Compilation halted due to static semantic errors.
+
+
+
 
 
 
